@@ -12,8 +12,10 @@ return new class extends Migration {
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->constrained('tenants', 'id', 'fk_orders_tenant_id')->onDelete('cascade')->index();
-            $table->foreignId('branch_id')->nullable()->constrained('branches', 'id', 'fk_orders_branch_id')->onDelete('set null');
+            $table->unsignedBigInteger('tenant_id');
+            $table->foreign('tenant_id', 'od_ord_tid')->references('id')->on('tenants')->onDelete('cascade');
+            $table->unsignedBigInteger('branch_id')->nullable();
+            $table->foreign('branch_id', 'od_ord_bid')->references('id')->on('branches')->onDelete('set null');
             $table->string('order_no')->index();
             $table->string('customer_name');
             $table->string('customer_mobile');
@@ -34,8 +36,10 @@ return new class extends Migration {
 
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained('orders', 'id', 'fk_order_items_order_id')->onDelete('cascade')->index();
-            $table->foreignId('item_id')->nullable()->constrained('items', 'id', 'fk_order_items_item_id')->onDelete('set null');
+            $table->unsignedBigInteger('order_id');
+            $table->foreign('order_id', 'od_itm_oid')->references('id')->on('orders')->onDelete('cascade');
+            $table->unsignedBigInteger('item_id')->nullable();
+            $table->foreign('item_id', 'od_itm_iid')->references('id')->on('items')->onDelete('set null');
             $table->string('item_name'); // Snapshot
             $table->decimal('qty', 10, 3)->default(1);
             $table->string('unit_label')->nullable();
@@ -49,10 +53,12 @@ return new class extends Migration {
 
         Schema::create('order_status_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained('orders', 'id', 'fk_status_logs_order_id')->onDelete('cascade')->index();
+            $table->unsignedBigInteger('order_id');
+            $table->foreign('order_id', 'od_log_oid')->references('id')->on('orders')->onDelete('cascade');
             $table->string('from_status')->nullable();
             $table->string('to_status');
-            $table->foreignId('changed_by_user_id')->nullable()->constrained('users', 'id', 'fk_status_logs_user_id')->onDelete('set null');
+            $table->unsignedBigInteger('changed_by_user_id')->nullable();
+            $table->foreign('changed_by_user_id', 'od_log_uid')->references('id')->on('users')->onDelete('set null');
             $table->timestamp('created_at')->useCurrent();
         });
     }

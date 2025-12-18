@@ -12,7 +12,8 @@ return new class extends Migration {
     {
         Schema::create('branches', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->constrained('tenants', 'id', 'fk_branches_tenant_id')->onDelete('cascade')->index();
+            $table->unsignedBigInteger('tenant_id');
+            $table->foreign('tenant_id', 'qrk_br_tid')->references('id')->on('tenants')->onDelete('cascade');
             $table->string('name');
             $table->string('whatsapp_number')->nullable();
             $table->text('address')->nullable();

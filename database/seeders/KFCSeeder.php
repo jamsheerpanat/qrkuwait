@@ -27,6 +27,12 @@ class KFCSeeder extends Seeder
             ]
         );
 
+        $this->command->info('Setting up KFC (ID: ' . $tenant->id . ')');
+
+        // Clear existing to avoid duplicates
+        Item::where('tenant_id', $tenant->id)->delete();
+        Category::where('tenant_id', $tenant->id)->delete();
+
         // 2. Create Branch
         $branch = Branch::updateOrCreate(
             ['tenant_id' => $tenant->id, 'is_default' => true],
@@ -88,69 +94,65 @@ class KFCSeeder extends Seeder
         ]);
 
         // 6. Items
-        $item1 = Item::create([
-            'tenant_id' => $tenant->id,
-            'category_id' => $catBucket->id,
-            'name' => ['en' => '9 Pcs Bucket', 'ar' => '9 قطع دجاج'],
-            'description' => ['en' => '9 Pieces of Original or Spicy Chicken', 'ar' => '9 قطع دجاج بالخلطة السرية أو الحارة'],
-            'price' => 5.500,
-            'image' => 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=500',
-            'is_active' => true,
-            'sort_order' => 1
-        ]);
+        $items = [
+            [
+                'category_id' => $catBucket->id,
+                'name' => ['en' => '9 Pcs Bucket', 'ar' => '9 قطع دجاج'],
+                'description' => ['en' => '9 Pieces of Original or Spicy Chicken', 'ar' => '9 قطع دجاج بالخلطة السرية أو الحارة'],
+                'price' => 5.500,
+                'image' => 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=500',
+            ],
+            [
+                'category_id' => $catBucket->id,
+                'name' => ['en' => '15 Pcs Family Bucket', 'ar' => '15 قطع دجاج للعائلة'],
+                'description' => ['en' => '15 Pieces Chicken + 1 Salad + 1 Fries + 1.25L Pepsi', 'ar' => '15 قطعة دجاج + 1 سلطة + 1 بطاطس + 1.25 لتر بيبسي'],
+                'price' => 8.950,
+                'image' => 'https://images.unsplash.com/photo-1562967916-eb82221dfb92?q=80&w=500',
+            ],
+            [
+                'category_id' => $catIndividual->id,
+                'name' => ['en' => 'Zinger Meal', 'ar' => 'وجبة زنجر'],
+                'description' => ['en' => 'Zinger Sandwich + Fries + Drink', 'ar' => 'ساندوتش زنجر + بطاطس + مشروب'],
+                'price' => 2.450,
+                'image' => 'https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=500',
+            ],
+            [
+                'category_id' => $catSides->id,
+                'name' => ['en' => 'French Fries', 'ar' => 'بطاطس مقلية'],
+                'description' => ['en' => 'Golden Crispy Fries', 'ar' => 'بطاطس ذهبية مقرمشة'],
+                'price' => 0.750,
+                'image' => 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?q=80&w=500',
+            ],
+            [
+                'category_id' => $catSides->id,
+                'name' => ['en' => 'coleslaw', 'ar' => 'كول سلو'],
+                'description' => ['en' => 'Signature KFC Coleslaw', 'ar' => 'سلطة كول سلو المميزة'],
+                'price' => 0.650,
+                'image' => 'https://images.unsplash.com/photo-1512852939750-1305098529bf?q=80&w=500',
+            ]
+        ];
 
-        $item2 = Item::create([
-            'tenant_id' => $tenant->id,
-            'category_id' => $catBucket->id,
-            'name' => ['en' => '15 Pcs Family Bucket', 'ar' => '15 قطع دجاج للعائلة'],
-            'description' => ['en' => '15 Pieces Chicken + 1 Salad + 1 Fries + 1.25L Pepsi', 'ar' => '15 قطعة دجاج + 1 سلطة + 1 بطاطس + 1.25 لتر بيبسي'],
-            'price' => 8.950,
-            'image' => 'https://images.unsplash.com/photo-1562967916-eb82221dfb92?q=80&w=500',
-            'is_active' => true,
-            'sort_order' => 2
-        ]);
-
-        $item3 = Item::create([
-            'tenant_id' => $tenant->id,
-            'category_id' => $catIndividual->id,
-            'name' => ['en' => 'Zinger Meal', 'ar' => 'وجبة زنجر'],
-            'description' => ['en' => 'Zinger Sandwich + Fries + Drink', 'ar' => 'ساندوتش زنجر + بطاطس + مشروب'],
-            'price' => 2.450,
-            'image' => 'https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=500',
-            'is_active' => true,
-            'sort_order' => 3
-        ]);
-
-        $item4 = Item::create([
-            'tenant_id' => $tenant->id,
-            'category_id' => $catSides->id,
-            'name' => ['en' => 'French Fries', 'ar' => 'بطاطس مقلية'],
-            'description' => ['en' => 'Golden Crispy Fries', 'ar' => 'بطاطس ذهبية مقرمشة'],
-            'price' => 0.750,
-            'image' => 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?q=80&w=500',
-            'is_active' => true,
-            'sort_order' => 4
-        ]);
-
-        $item5 = Item::create([
-            'tenant_id' => $tenant->id,
-            'category_id' => $catSides->id,
-            'name' => ['en' => 'Coleslaw', 'ar' => 'كول سلو'],
-            'description' => ['en' => 'Signature KFC Coleslaw', 'ar' => 'سلطة كول سلو المميزة'],
-            'price' => 0.650,
-            'image' => 'https://images.unsplash.com/photo-1512852939750-1305098529bf?q=80&w=500',
-            'is_active' => true,
-            'sort_order' => 5
-        ]);
+        foreach ($items as $index => $itemData) {
+            Item::create(array_merge($itemData, [
+                'tenant_id' => $tenant->id,
+                'is_active' => true,
+                'sort_order' => $index + 1
+            ]));
+        }
 
         // Add Logo and Cover to settings
-        \App\Models\TenantSetting::updateOrCreate(
-            ['tenant_id' => $tenant->id, 'key' => 'logo'],
-            ['value' => 'https://upload.wikimedia.org/wikipedia/en/thumb/b/bf/KFC_logo.svg/1200px-KFC_logo.svg.png']
-        );
-        \App\Models\TenantSetting::updateOrCreate(
-            ['tenant_id' => $tenant->id, 'key' => 'cover'],
-            ['value' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1200']
-        );
+        $branding = [
+            'logo' => 'https://upload.wikimedia.org/wikipedia/en/thumb/b/bf/KFC_logo.svg/1200px-KFC_logo.svg.png',
+            'cover' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1200',
+        ];
+
+        foreach ($branding as $key => $value) {
+            \App\Models\TenantSetting::updateOrCreate(
+                ['tenant_id' => $tenant->id, 'key' => $key],
+                ['value' => $value]
+            );
+        }
+
+        $this->command->info('KFC Restaurant Seeded Successfully with Branding!');
     }
 }

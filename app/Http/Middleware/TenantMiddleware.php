@@ -42,6 +42,8 @@ class TenantMiddleware
         }
 
         if ($tenant) {
+            $tenant->load('settings');
+
             // Set context
             $context = app(\App\Services\TenantContext::class);
             $context->setTenant($tenant);
@@ -52,9 +54,7 @@ class TenantMiddleware
             // Share with views
             view()->share('currentTenant', $tenant);
 
-            $settings = \App\Models\TenantSetting::where('tenant_id', $tenant->id)
-                ->get()
-                ->pluck('value', 'key');
+            $settings = $tenant->settings->pluck('value', 'key')->toArray();
             view()->share('settings', $settings);
         }
 

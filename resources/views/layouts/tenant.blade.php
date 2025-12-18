@@ -76,8 +76,8 @@
             <div class="flex justify-between h-20 items-center">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 bg-white rounded-2xl shadow-sm border border-slate-100 p-1.5 overflow-hidden">
-                        @if(isset($settings['logo']) && is_string($settings['logo']) && $settings['logo'])
-                            <img src="{{ $currentTenant->getSettingUrl('logo') }}" class="w-full h-full object-contain">
+                        @if($currentTenant->logo_url)
+                            <img src="{{ $currentTenant->logo_url }}" class="w-full h-full object-contain">
                         @else
                             <div
                                 class="w-full h-full bg-brand-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">

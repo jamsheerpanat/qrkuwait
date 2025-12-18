@@ -26,6 +26,8 @@ class Tenant extends Model
         'settings' => 'array',
     ];
 
+    protected $appends = ['logo_url', 'cover_url'];
+
     public function branches()
     {
         return $this->hasMany(Branch::class);
@@ -56,5 +58,15 @@ class Tenant extends Model
             return $value;
         }
         return asset('storage/' . $value);
+    }
+
+    public function getLogoUrlAttribute()
+    {
+        return $this->getSettingUrl('logo');
+    }
+
+    public function getCoverUrlAttribute()
+    {
+        return $this->getSettingUrl('cover');
     }
 }

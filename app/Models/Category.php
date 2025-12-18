@@ -31,11 +31,11 @@ class Category extends Model
         return $this->hasMany(Item::class)->orderBy('sort_order');
     }
 
-    // Helper for bilingual name
-    public function getNameAttribute($value)
+    public function getLocalizedName()
     {
-        $name = json_decode($value, true);
+        if (!is_array($this->name))
+            return '';
         $locale = app()->getLocale();
-        return $name[$locale] ?? ($name['en'] ?? '');
+        return $this->name[$locale] ?? ($this->name['en'] ?? '');
     }
 }

@@ -33,6 +33,8 @@ class ItemModifier extends Model
 
     public function getLocalizedName()
     {
+        if (!is_array($this->name))
+            return '';
         $locale = app()->getLocale();
         return $this->name[$locale] ?? ($this->name['en'] ?? '');
     }

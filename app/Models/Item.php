@@ -48,12 +48,16 @@ class Item extends Model
 
     public function getLocalizedName()
     {
+        if (!is_array($this->name))
+            return '';
         $locale = app()->getLocale();
         return $this->name[$locale] ?? ($this->name['en'] ?? '');
     }
 
     public function getLocalizedDescription()
     {
+        if (!is_array($this->description))
+            return '';
         $locale = app()->getLocale();
         return $this->description[$locale] ?? ($this->description['en'] ?? '');
     }

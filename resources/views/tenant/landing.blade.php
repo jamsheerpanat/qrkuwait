@@ -5,7 +5,7 @@
         @open-cart.window="showCart = true"
         @open-search.window="showSearch = true"
         class="pb-32 relative">
-        
+
         <!-- Search Drawer / Modal -->
         <div x-show="showSearch" class="fixed inset-0 z-[100] flex items-start justify-center pt-24 px-4" x-cloak @keydown.escape.window="showSearch = false">
             <div @click="showSearch = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></div>
@@ -22,7 +22,7 @@
                         placeholder="{{ __('Search dishes, drinks or categories...') }}" autofocus>
                     <button @click="showSearch = false" class="absolute right-5 text-slate-400 font-bold hover:text-slate-900">{{ __('Close') }}</button>
                 </div>
-                
+
                 <div class="mt-8 max-h-[60vh] overflow-y-auto no-scrollbar space-y-4">
                     <template x-if="filteredItems.length === 0">
                         <div class="text-center py-12 text-slate-400 italic">{{ __('No items found matching your search...') }}</div>
@@ -54,7 +54,7 @@
                 </div>
             @endif
             <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent"></div>
-            
+
             <div class="absolute top-10 right-10 flex gap-3">
                  <div class="glass px-4 py-2 rounded-2xl flex items-center gap-2">
                     <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
@@ -122,7 +122,7 @@
                         x-transition:enter="transition ease-out duration-400" x-transition:enter-start="opacity-0 scale-95"
                         x-transition:enter-end="opacity-100 scale-100"
                         class="bg-white rounded-[3rem] p-8 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-slate-100 hover:shadow-2xl hover:shadow-slate-200/60 transition-all duration-500 group relative @if(!$item->is_active) opacity-50 grayscale @endif"
-                        @click="@if($item->is_active) openItem({{ $item->load(['variants', 'modifiers'])->toJson() }}) @endif">
+                        @click="@if($item->is_active) openItem({{ $item->toJson() }}) @endif">
 
                         <div class="flex gap-6 h-full items-center">
                             <div class="flex-1 space-y-4">
@@ -171,7 +171,7 @@
                 x-transition:enter="transition ease-out duration-500"
                 x-transition:enter-start="translate-x-full"
                 x-transition:enter-end="translate-x-0">
-                
+
                 <template x-if="selectedItem">
                     <div class="flex-1 flex flex-col overflow-y-auto no-scrollbar">
                         <!-- Modal Image -->
@@ -274,7 +274,7 @@
                 x-transition:enter="transition ease-out duration-500"
                 x-transition:enter-start="translate-x-full"
                 x-transition:enter-end="translate-x-0">
-                
+
                 <div class="p-10 flex-shrink-0 flex justify-between items-center border-b border-slate-50">
                     <div>
                         <h2 class="text-3xl font-black italic text-slate-900 tracking-tighter">{{ __('My Order') }}</h2>
@@ -384,7 +384,7 @@
                 itemNote: '',
                 locale: '{{ app()->getLocale() }}',
                 tenantSlug: '{{ $tenant->slug }}',
-                
+
                 init() {
                     const savedCart = localStorage.getItem('cart_' + this.tenantSlug);
                     if (savedCart) {
@@ -399,7 +399,7 @@
                     const allItems = [];
                     @foreach($categories as $category)
                         @foreach($category->items as $item)
-                            allItems.push({!! $item->load(['variants', 'modifiers'])->toJson() !!});
+                            allItems.push({!! $item->toJson() !!});
                         @endforeach
                     @endforeach
                     return allItems.filter(i => {

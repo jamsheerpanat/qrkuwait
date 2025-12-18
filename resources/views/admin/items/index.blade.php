@@ -52,7 +52,7 @@
                                     </td>
                                     <td class="px-6 py-4 font-bold">{{ $item->getLocalizedName() }}</td>
                                     <td class="px-6 py-4">
-                                        {{ $item->category->getNameAttribute(json_encode($item->category->name)) }}</td>
+                                        {{ $item->category->getLocalizedName() }}</td>
                                     <td class="px-6 py-4 font-mono text-indigo-600 font-bold">
                                         {{ number_format($item->price, 3) }} KD</td>
                                     <td class="px-6 py-4">

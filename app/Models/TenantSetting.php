@@ -17,7 +17,7 @@ class TenantSetting extends Model
     ];
 
     protected $casts = [
-        'value' => 'array',
+        // No global cast for value as it can be mixed (string, boolean, array)
     ];
 
     public function tenant()

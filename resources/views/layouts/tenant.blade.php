@@ -76,7 +76,7 @@
             <div class="flex justify-between h-20 items-center">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 bg-white rounded-2xl shadow-sm border border-slate-100 p-1.5 overflow-hidden">
-                        @if(isset($settings['logo']))
+                        @if(isset($settings['logo']) && is_string($settings['logo']) && $settings['logo'])
                             <img src="{{ asset('storage/' . $settings['logo']) }}" class="w-full h-full object-contain">
                         @else
                             <div

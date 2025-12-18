@@ -25,33 +25,48 @@ class SettingController extends Controller
             return back()->with('success', 'API Key generated successfully.');
         }
 
-        $data = $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'currency' => 'required|string|max:3',
             'timezone' => 'required|string',
             'settings' => 'nullable|array',
-            'logo' => 'nullable|image|max:1024', // Added back validation for logo
-            'cover' => 'nullable|image|max:2048', // Added back validation for cover
+            'logo' => 'nullable|image|max:1024',
+            'cover' => 'nullable|image|max:2048',
         ]);
 
-        // Process settings checkboxes (ensure unchecked items are false)
-        $currentSettings = $tenant->settings ?: [];
+        // 1. Update core Tenant model fields
+        $tenant->update([
+            'name' => $validated['name'],
+            'currency' => $validated['currency'],
+            'timezone' => $validated['timezone'],
+        ]);
+
+        // 2. Prepare settings to save in TenantSetting table
+        $settingsToSave = [
+            'currency' => $validated['currency'],
+            'timezone' => $validated['timezone'],
+            'name' => $validated['name'],
+        ];
+
+        // Process feature flags (checkboxes)
         $features = ['enable_kds', 'enable_packing', 'enable_delivery', 'enable_pickup', 'enable_variants', 'enable_modifiers', 'enable_whatsapp_notify'];
-        $newSettings = $request->input('settings', []); // Get settings from request, default to empty array
-
+        $inputSettings = $request->input('settings', []);
         foreach ($features as $f) {
-            $currentSettings[$f] = isset($newSettings[$f]) && $newSettings[$f] == '1';
+            $settingsToSave[$f] = isset($inputSettings[$f]) && $inputSettings[$f] == '1' ? '1' : '0';
         }
 
-        // Handle File Uploads
+        // Handle Logo Upload
         if ($request->hasFile('logo')) {
-            $currentSettings['logo'] = $request->file('logo')->store('branding', 'public');
-        }
-        if ($request->hasFile('cover')) {
-            $data['cover'] = $request->file('cover')->store('branding', 'public');
+            $settingsToSave['logo'] = $request->file('logo')->store('branding', 'public');
         }
 
-        foreach ($data as $key => $value) {
+        // Handle Cover Upload
+        if ($request->hasFile('cover')) {
+            $settingsToSave['cover'] = $request->file('cover')->store('branding', 'public');
+        }
+
+        // 3. Persist all settings to TenantSetting table
+        foreach ($settingsToSave as $key => $value) {
             \App\Models\TenantSetting::updateOrCreate(
                 ['tenant_id' => $tenant->id, 'key' => $key],
                 ['value' => $value]

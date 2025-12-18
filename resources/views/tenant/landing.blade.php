@@ -45,7 +45,7 @@
 
         <!-- Hero / Banner -->
         <div class="relative h-64 md:h-96 rounded-[3.5rem] overflow-hidden mb-16 shadow-2xl group border-4 border-white">
-            @if(isset($settings['cover']))
+            @if(isset($settings['cover']) && is_string($settings['cover']) && $settings['cover'])
                 <img src="{{ asset('storage/' . $settings['cover']) }}"
                     class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
             @else
@@ -64,7 +64,7 @@
 
             <div class="absolute bottom-10 left-10 md:left-14 flex items-end gap-6 text-white w-full pr-20">
                 <div class="w-24 h-24 md:w-36 md:h-36 bg-white rounded-[2.5rem] p-3 shadow-2xl border-4 border-white/20 overflow-hidden transition-transform duration-500 hover:rotate-2">
-                    @if(isset($settings['logo']))
+                    @if(isset($settings['logo']) && is_string($settings['logo']) && $settings['logo'])
                         <img src="{{ asset('storage/' . $settings['logo']) }}" class="w-full h-full object-contain rounded-2xl">
                     @else
                         <div class="w-full h-full bg-brand-600 rounded-2xl flex items-center justify-center text-5xl font-black italic">

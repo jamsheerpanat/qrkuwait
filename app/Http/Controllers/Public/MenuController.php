@@ -23,9 +23,6 @@ class MenuController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        $settings = \App\Models\TenantSetting::where('tenant_id', $tenant->id)
-            ->pluck('value', 'key');
-
-        return view('tenant.landing', compact('tenant', 'categories', 'settings'));
+        return view('tenant.landing', compact('tenant', 'categories'));
     }
 }

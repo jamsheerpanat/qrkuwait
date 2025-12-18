@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
         // 3. Create Tenant Branch
         $branch = $tenant->branches()->create([
             'name' => 'Grand Avenue Branch',
-            'whatsapp_number' => '+96590000000',
+            'whatsapp_number' => '+96599750046',
             'address' => 'The Avenues Mall, Kuwait City',
             'is_default' => true,
         ]);

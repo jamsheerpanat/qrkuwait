@@ -53,6 +53,7 @@ class TenantMiddleware
             view()->share('currentTenant', $tenant);
 
             $settings = \App\Models\TenantSetting::where('tenant_id', $tenant->id)
+                ->get()
                 ->pluck('value', 'key');
             view()->share('settings', $settings);
         }

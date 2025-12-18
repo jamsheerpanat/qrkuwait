@@ -37,7 +37,7 @@
                                 <tr>
                                     <td class="px-6 py-4">
                                         @if($item->image)
-                                            <img src="{{ asset('storage/' . $item->image) }}"
+                                            <img src="{{ $item->image_url }}"
                                                 class="w-12 h-12 rounded-lg object-cover">
                                         @else
                                             <div

@@ -31,6 +31,8 @@ class Item extends Model
         'is_weighted' => 'boolean',
     ];
 
+    protected $appends = ['image_url'];
+
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -60,5 +62,15 @@ class Item extends Model
             return '';
         $locale = app()->getLocale();
         return $this->description[$locale] ?? ($this->description['en'] ?? '');
+    }
+
+    public function getImageUrlAttribute()
+    {
+        if (!$this->image)
+            return null;
+        if (filter_var($this->image, FILTER_VALIDATE_URL)) {
+            return $this->image;
+        }
+        return asset('storage/' . $this->image);
     }
 }

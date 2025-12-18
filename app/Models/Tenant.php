@@ -40,4 +40,21 @@ class Tenant extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function getSetting($key, $default = null)
+    {
+        $setting = $this->settings()->where('key', $key)->first();
+        return $setting ? $setting->value : $default;
+    }
+
+    public function getSettingUrl($key, $default = null)
+    {
+        $value = $this->getSetting($key);
+        if (!$value)
+            return $default;
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            return $value;
+        }
+        return asset('storage/' . $value);
+    }
 }

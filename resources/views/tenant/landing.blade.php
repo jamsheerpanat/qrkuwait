@@ -30,7 +30,7 @@
                     <template x-for="item in filteredItems" :key="item.id">
                         <div @click="openItem(item); showSearch = false" class="flex gap-4 p-4 rounded-2xl hover:bg-slate-50 transition cursor-pointer group">
                             <div class="w-16 h-16 rounded-xl bg-slate-100 overflow-hidden flex-shrink-0">
-                                <img :src="item.image ? '/storage/' + item.image : ''" class="w-full h-full object-cover" x-show="item.image">
+                                <img :src="item.image_url" class="w-full h-full object-cover" x-show="item.image_url">
                             </div>
                             <div class="flex-1">
                                 <div class="font-bold text-slate-900" x-text="getLocName(item)"></div>
@@ -46,7 +46,7 @@
         <!-- Hero / Banner -->
         <div class="relative h-64 md:h-96 rounded-[3.5rem] overflow-hidden mb-16 shadow-2xl group border-4 border-white">
             @if(isset($settings['cover']) && is_string($settings['cover']) && $settings['cover'])
-                <img src="{{ asset('storage/' . $settings['cover']) }}"
+                <img src="{{ $tenant->getSettingUrl('cover') }}"
                     class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
             @else
                 <div class="w-full h-full bg-gradient-to-br from-slate-900 to-brand-900 flex items-center justify-center">
@@ -65,7 +65,7 @@
             <div class="absolute bottom-10 left-10 md:left-14 flex items-end gap-6 text-white w-full pr-20">
                 <div class="w-24 h-24 md:w-36 md:h-36 bg-white rounded-[2.5rem] p-3 shadow-2xl border-4 border-white/20 overflow-hidden transition-transform duration-500 hover:rotate-2">
                     @if(isset($settings['logo']) && is_string($settings['logo']) && $settings['logo'])
-                        <img src="{{ asset('storage/' . $settings['logo']) }}" class="w-full h-full object-contain rounded-2xl">
+                        <img src="{{ $tenant->getSettingUrl('logo') }}" class="w-full h-full object-contain rounded-2xl">
                     @else
                         <div class="w-full h-full bg-brand-600 rounded-2xl flex items-center justify-center text-5xl font-black italic">
                             {{ substr($tenant->name, 0, 1) }}
@@ -154,7 +154,7 @@
                             </div>
                             @if($item->image)
                                 <div class="w-28 h-28 md:w-32 md:h-32 rounded-[2.5rem] overflow-hidden shadow-inner flex-shrink-0 border-2 border-slate-50">
-                                    <img src="{{ asset('storage/' . $item->image) }}"
+                                    <img src="{{ $item->image_url }}"
                                         class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
                                 </div>
                             @endif
@@ -176,7 +176,7 @@
                     <div class="flex-1 flex flex-col overflow-y-auto no-scrollbar">
                         <!-- Modal Image -->
                         <div class="relative h-64 flex-shrink-0 bg-slate-100">
-                            <img :src="selectedItem.image ? '/storage/' + selectedItem.image : ''" class="w-full h-full object-cover" x-show="selectedItem.image">
+                            <img :src="selectedItem.image_url" class="w-full h-full object-cover" x-show="selectedItem.image_url">
                             <div x-show="!selectedItem.image" class="w-full h-full flex items-center justify-center bg-brand-50">
                                 <span class="text-4xl text-brand-200 font-black italic">QRKUWAIT</span>
                             </div>
@@ -302,7 +302,7 @@
                     <template x-for="(item, index) in cart" :key="item.cartKey">
                         <div class="flex gap-6 group">
                             <div class="w-20 h-20 bg-slate-50 rounded-2xl overflow-hidden flex-shrink-0">
-                                <img :src="item.image ? '/storage/' + item.image : ''" class="w-full h-full object-cover" x-show="item.image">
+                                <img :src="item.image_url" class="w-full h-full object-cover" x-show="item.image_url">
                             </div>
                             <div class="flex-1 space-y-2">
                                 <div class="flex justify-between items-start">

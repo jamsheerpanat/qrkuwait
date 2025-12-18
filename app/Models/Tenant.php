@@ -33,7 +33,7 @@ class Tenant extends Model
         return $this->hasMany(Branch::class);
     }
 
-    public function settings()
+    public function customSettings()
     {
         return $this->hasMany(TenantSetting::class);
     }
@@ -45,7 +45,12 @@ class Tenant extends Model
 
     public function getSetting($key, $default = null)
     {
-        $setting = $this->settings()->where('key', $key)->first();
+        // Use loaded relationship to avoid N+1 and naming conflicts
+        $settings = $this->relationLoaded('customSettings')
+            ? $this->customSettings
+            : $this->customSettings();
+
+        $setting = $settings->where('key', $key)->first();
         return $setting ? $setting->value : $default;
     }
 

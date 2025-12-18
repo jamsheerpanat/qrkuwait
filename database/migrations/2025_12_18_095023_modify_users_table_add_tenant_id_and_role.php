@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('tenant_id')->nullable()->constrained()->onDelete('cascade')->index();
+            $table->foreignId('tenant_id')->nullable()->constrained('tenants', 'id', 'fk_users_tenant_id')->onDelete('cascade')->index();
             $table->enum('role', ['super_admin', 'tenant_admin', 'cashier', 'kitchen'])->default('tenant_admin');
         });
     }

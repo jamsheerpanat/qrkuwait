@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('tenant_settings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->constrained()->onDelete('cascade')->index();
+            $table->foreignId('tenant_id')->constrained('tenants', 'id', 'fk_tenant_settings_tenant_id')->onDelete('cascade')->index();
             $table->string('key')->index();
             $table->json('value')->nullable();
             $table->timestamps();

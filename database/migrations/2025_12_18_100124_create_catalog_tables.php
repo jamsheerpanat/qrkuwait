@@ -13,7 +13,7 @@ return new class extends Migration {
         // Categories
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->constrained()->onDelete('cascade')->index();
+            $table->foreignId('tenant_id')->constrained('tenants', 'id', 'fk_categories_tenant_id')->onDelete('cascade')->index();
             $table->json('name'); // {en, ar}
             $table->integer('sort_order')->default(0);
             $table->boolean('is_active')->default(true);
@@ -23,8 +23,8 @@ return new class extends Migration {
         // Items
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->constrained()->onDelete('cascade')->index();
-            $table->foreignId('category_id')->constrained()->onDelete('cascade')->index();
+            $table->foreignId('tenant_id')->constrained('tenants', 'id', 'fk_items_tenant_id')->onDelete('cascade')->index();
+            $table->foreignId('category_id')->constrained('categories', 'id', 'fk_items_category_id')->onDelete('cascade')->index();
             $table->json('name'); // {en, ar}
             $table->json('description')->nullable(); // {en, ar}
             $table->decimal('price', 10, 3)->default(0);
@@ -40,7 +40,7 @@ return new class extends Migration {
         // Item Variants
         Schema::create('item_variants', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('item_id')->constrained()->onDelete('cascade')->index();
+            $table->foreignId('item_id')->constrained('items', 'id', 'fk_item_variants_item_id')->onDelete('cascade')->index();
             $table->json('name'); // {en, ar}
             $table->decimal('price_diff', 10, 3)->default(0);
             $table->boolean('is_default')->default(false);
@@ -50,7 +50,7 @@ return new class extends Migration {
         // Item Modifiers
         Schema::create('item_modifiers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('item_id')->constrained()->onDelete('cascade')->index();
+            $table->foreignId('item_id')->constrained('items', 'id', 'fk_item_modifiers_item_id')->onDelete('cascade')->index();
             $table->json('name'); // {en, ar}
             $table->enum('type', ['single', 'multiple'])->default('single');
             $table->boolean('is_required')->default(false);
@@ -60,7 +60,7 @@ return new class extends Migration {
         // Item Modifier Options
         Schema::create('item_modifier_options', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('modifier_id')->constrained('item_modifiers')->onDelete('cascade')->index();
+            $table->foreignId('modifier_id')->constrained('item_modifiers', 'id', 'fk_item_mod_options_mod_id')->onDelete('cascade')->index();
             $table->json('name'); // {en, ar}
             $table->decimal('price_diff', 10, 3)->default(0);
             $table->timestamps();

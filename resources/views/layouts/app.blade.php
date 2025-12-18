@@ -37,6 +37,27 @@
 
         <!-- Page Content -->
         <main>
+            <!-- Global Flash Messages -->
+            @if(session('success'))
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+                    class="max-w-7xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
+                    <div class="bg-green-600 text-white px-6 py-4 rounded-2xl shadow-lg flex justify-between items-center font-bold">
+                        <span>{{ session('success') }}</span>
+                        <button @click="show = false">&times;</button>
+                    </div>
+                </div>
+            @endif
+            
+            @if(session('error'))
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+                    class="max-w-7xl mx-auto mt-4 px-4 sm:px-6 lg:px-8">
+                    <div class="bg-red-600 text-white px-6 py-4 rounded-2xl shadow-lg flex justify-between items-center font-bold">
+                        <span>{{ session('error') }}</span>
+                        <button @click="show = false">&times;</button>
+                    </div>
+                </div>
+            @endif
+
             {{ $slot }}
         </main>
     </div>

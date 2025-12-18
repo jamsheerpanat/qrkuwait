@@ -47,7 +47,13 @@ class KDSController extends Controller
                     'type' => $order->delivery_type,
                     'elapsed' => $order->created_at->diffInMinutes(now()),
                     'notes' => $order->notes,
-                    'items' => $order->items->map(fn($i) => ['name' => $i->item_name, 'qty' => (float) $i->qty])
+                    'items' => $order->items->map(fn($i) => [
+                        'name' => $i->item_name,
+                        'qty' => (float) $i->qty,
+                        'notes' => $i->notes,
+                        'variants' => $i->selected_variants,
+                        'modifiers' => $i->selected_modifiers
+                    ])
                 ];
             });
 

@@ -17,8 +17,11 @@
                     </x-nav-link>
 
                     @if(auth()->user()->role === 'super_admin')
-                        <x-nav-link :href="route('super.dashboard')" :active="request()->routeIs('super.*')">
-                            {{ __('Super Admin') }}
+                        <x-nav-link :href="route('super.dashboard')" :active="request()->routeIs('super.dashboard')">
+                            {{ __('Dashboard') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('super.tenants.index')" :active="request()->routeIs('super.tenants.*')">
+                            {{ __('Merchants') }}
                         </x-nav-link>
                     @else
                         <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
@@ -111,8 +114,11 @@
             </x-responsive-nav-link>
 
             @if(auth()->user()->role === 'super_admin')
-                <x-responsive-nav-link :href="route('super.dashboard')" :active="request()->routeIs('super.*')">
-                    {{ __('Super Admin') }}
+                <x-responsive-nav-link :href="route('super.dashboard')" :active="request()->routeIs('super.dashboard')">
+                    {{ __('Dashboard') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('super.tenants.index')" :active="request()->routeIs('super.tenants.*')">
+                    {{ __('Merchants') }}
                 </x-responsive-nav-link>
             @else
                 <x-responsive-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">

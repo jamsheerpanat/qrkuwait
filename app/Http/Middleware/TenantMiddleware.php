@@ -19,6 +19,12 @@ class TenantMiddleware
         $slug = $request->route('tenant_slug');
 
         if ($slug) {
+            // Exclude system routes from being treated as tenant slugs
+            $reserved = ['login', 'register', 'dashboard', 'admin', 'api', 'profile', 'logout'];
+            if (in_array(strtolower($slug), $reserved)) {
+                return $next($request);
+            }
+
             // Validate slug: letters, numbers, dash, underscore
             if (!preg_match('/^[a-zA-Z0-9\-_]+$/', $slug)) {
                 abort(404, 'Invalid tenant slug.');

@@ -24,9 +24,12 @@ class ReportController extends Controller
             ->limit(5)
             ->get();
 
+        $driver = \DB::connection()->getDriverName();
+        $hourExpr = $driver === 'sqlite' ? "strftime('%H', created_at)" : "HOUR(created_at)";
+
         $peakHours = \App\Models\Order::where('tenant_id', $tenant->id)
             ->where('created_at', '>=', now()->subDays(30))
-            ->selectRaw('HOUR(created_at) as hour, count(*) as count')
+            ->selectRaw("$hourExpr as hour, count(*) as count")
             ->groupBy('hour')
             ->orderByDesc('count')
             ->limit(5)

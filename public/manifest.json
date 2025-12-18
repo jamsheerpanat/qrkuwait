@@ -1,0 +1,16 @@
+{
+    "name": "QRKuwait Ordering",
+    "short_name": "QRKuwait",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#4F46E5",
+    "description": "Premium Digital Menu & Ordering System for Kuwait",
+    "icons": [
+        {
+            "src": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

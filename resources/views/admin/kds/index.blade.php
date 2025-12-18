@@ -1,142 +1,244 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KDS - {{ $tenant->name }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Tajawal:wght@400;700;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: { 500: '#5c7bff', 600: '#3d56ff' }
+                    }
+                }
+            }
+        }
+    </script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
 </head>
 
-<body class="bg-slate-900 text-white overflow-hidden h-screen" x-data="kdsBoard()" x-init="init()">
+<body class="bg-slate-950 text-white overflow-hidden h-screen font-sans" x-data="kdsBoard()" x-init="init()"
+    :dir="isArabic ? 'rtl' : 'ltr'">
     <!-- Header -->
-    <header class="h-20 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-10">
+    <header
+        class="h-20 bg-slate-900 border-b border-white/5 flex items-center justify-between px-10 shadow-2xl z-50 relative">
         <div class="flex items-center gap-6">
-            <h1 class="text-2xl font-black italic tracking-tighter">KITCHEN<span class="text-brand-500">DISPLAY</span>
+            <h1 class="text-2xl font-black italic tracking-tighter">
+                <span x-text="isArabic ? 'لوحة' : 'KITCHEN'"></span><span class="text-brand-500"
+                    x-text="isArabic ? ' المطبخ' : 'DISPLAY'"></span>
             </h1>
-            <div class="h-8 w-px bg-slate-700"></div>
-            <span class="text-slate-400 font-bold uppercase tracking-widest text-xs">{{ $tenant->name }}</span>
+            <div class="h-8 w-px bg-white/10"></div>
+            <span class="text-slate-500 font-bold uppercase tracking-widest text-xs">{{ $tenant->name }}</span>
         </div>
-        <div class="flex items-center gap-8">
-            <div class="flex items-center gap-3">
-                <span
-                    class="w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]"></span>
-                <span class="text-sm font-bold text-slate-300">LIVE FEED</span>
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-3 glass bg-white/5 px-4 py-2 rounded-2xl border border-white/10">
+                <span class="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]"></span>
+                <span class="text-[10px] font-black tracking-widest text-slate-300"
+                    x-text="isArabic ? 'مباشر' : 'LIVE FEED'"></span>
             </div>
-            <button @click="soundEnabled = !soundEnabled" class="p-3 rounded-xl transition"
-                :class="soundEnabled ? 'bg-brand-600 text-white' : 'bg-slate-700 text-slate-400'">
-                <svg x-show="soundEnabled" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z">
-                    </path>
-                </svg>
-                <svg x-show="!soundEnabled" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z">
-                    </path>
-                    <path d="M17 7l-10 10M7 7l10 10"></path>
-                </svg>
-            </button>
-            <div class="text-2xl font-mono text-slate-400" x-text="currentTime"></div>
+<div class="flex items-center gap-2">
+    <button @click="isArabic = !isArabic"
+        class="w-12 h-12 flex items-center justify-center bg-slate-800 rounded-2xl font-black text-xs hover:bg-slate-700 transition">
+        <span x-text="isArabic ? 'EN' : 'AR'"></span>
+    </button>
+                <button @click="toggleFullscreen()"
+                    class="w-12 h-12 flex items-center justify-center bg-slate-800 rounded-2xl text-slate-400 hover:text-white transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                    </svg>
+                </button>
+                <button @click="soundEnabled = !soundEnabled"
+                    class="w-12 h-12 flex items-center justify-center rounded-2xl transition shadow-xl"
+                    :class="soundEnabled ? 'bg-brand-600 text-white' : 'bg-slate-700 text-slate-500'">
+                    <svg x-show="soundEnabled" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z">
+                        </path>
+                    </svg>
+                    <svg x-show="!soundEnabled" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z">
+                        </path>
+                        <path d="M17 7l-10 10M7 7l10 10"></path>
+                    </svg>
+                </button>
+                </div>
+                <div class="text-3xl font-black italic tracking-tighter text-white" x-text="currentTime"></div>
         </div>
     </header>
 
     <!-- Board -->
-    <main class="h-[calc(100vh-5rem)] p-8 overflow-x-auto no-scrollbar">
-        <div class="flex gap-8 h-full min-w-max">
-            <!-- Confirmed / New -->
-            <div class="w-96 flex flex-col gap-6 h-full">
-                <div class="flex items-center justify-between border-b border-orange-500/30 pb-4">
-                    <h2 class="text-xl font-black italic text-orange-500 uppercase">New Orders</h2>
-                    <span class="bg-orange-500 text-white px-3 py-1 rounded-lg text-sm font-black"
+    <main class="h-[calc(100vh-5rem)] p-10 overflow-x-auto no-scrollbar bg-slate-950">
+        <div class="flex gap-10 h-full min-w-max">
+            <!-- NEW ORDERS -->
+            <div class="w-[28rem] flex flex-col gap-8 h-full">
+                <div class="flex items-center justify-between border-b-4 border-orange-500/20 pb-5">
+                    <h2 class="text-2xl font-black italic text-orange-500 uppercase tracking-tighter"
+                        x-text="isArabic ? 'طلبات جديدة' : 'New Orders'"></h2>
+                    <span
+                        class="bg-orange-500 text-white w-10 h-10 flex items-center justify-center rounded-2xl text-xl font-black shadow-lg shadow-orange-500/20"
                         x-text="ordersByStatus('confirmed').length"></span>
                 </div>
-                <div class="flex-1 overflow-y-auto space-y-4 no-scrollbar">
+                <div class="flex-1 overflow-y-auto space-y-6 no-scrollbar pb-20">
                     <template x-for="order in ordersByStatus('confirmed')" :key="order.id">
                         <div
-                            class="bg-slate-800 border-l-8 border-orange-500 p-6 rounded-2xl shadow-xl hover:scale-[1.02] transition">
-                            <div class="flex justify-between items-start mb-4">
-                                <span class="text-2xl font-black italic text-white"
-                                    x-text="'#' + order.order_no"></span>
-                                <span class="px-2 py-1 bg-slate-700 rounded text-[10px] font-bold text-slate-400"
-                                    x-text="order.type.toUpperCase()"></span>
+                            class="bg-slate-900 border-l-[10px] border-orange-500 p-8 rounded-[2.5rem] shadow-2xl hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden ring-1 ring-white/5">
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="text-4xl font-black italic text-white tracking-tighter" x-text="'#' + order.order_no"></span>
+                                <span class="px-3 py-1 bg-white/10 rounded-xl text-[10px] font-black tracking-[0.2em] text-orange-500 uppercase"
+                                    x-text="order.type"></span>
                             </div>
-                            <div class="space-y-3 mb-6">
+                            <div class="space-y-4 mb-8">
                                 <template x-for="item in order.items">
-                                    <div class="flex justify-between text-lg font-bold">
-                                        <span x-text="item.name"></span>
-                                        <span class="text-brand-500" x-text="'x' + item.qty"></span>
+                                    <div class="space-y-1">
+                                        <div class="flex justify-between items-baseline text-xl font-black">
+                                            <span x-text="item.name" class="text-white"></span>
+                                            <span class="text-orange-500 ml-4 font-black text-2xl" x-text="'x' + item.qty"></span>
+                                        </div>
+                                        <div class="text-xs font-bold text-slate-500 uppercase flex flex-col gap-1 pl-4"
+                                            x-show="item.variants || item.modifiers || item.notes">
+                                            <template x-if="item.variants">
+                                                <span class="text-slate-400" x-text="'• ' + (item.variants.name || item.variants)"></span>
+                                            </template>
+                                            <template x-for="m in item.modifiers">
+                                                <span class="text-slate-400" x-text="'• ' + (m.name || m)"></span>
+                                            </template>
+                                            <template x-if="item.notes">
+                                                <span class="text-yellow-500 italic bg-yellow-500/10 px-2 py-1 rounded" x-text="'💬 ' + item.notes"></span>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    </template>
+                                    <!-- Global Note -->
+                                    <template x-if="order.notes">
+                                        <div class="bg-blue-500/10 p-4 rounded-xl border border-blue-500/20 mt-4">
+                                            <div class="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1"
+                                                x-text="isArabic ? 'ملاحظة الطلب' : 'ORDER NOTE'"></div>
+                                            <div class="text-sm font-bold text-blue-100 italic" x-text="order.notes"></div>
                                     </div>
                                 </template>
                             </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
-                                <span class="text-xs font-bold text-slate-500"
-                                    x-text="order.elapsed + ' MINS AGO'"></span>
+<div class="flex items-center justify-between pt-6 border-t border-white/5">
+    <div class="flex flex-col">
+        <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest"
+            x-text="isArabic ? 'الوقت المنقضي' : 'ELAPSED TIME'"></span>
+        <span class="text-lg font-black italic tracking-tighter"
+            :class="order.elapsed > 15 ? 'text-red-500 animate-pulse' : 'text-slate-400'"
+            x-text="order.elapsed + ' MINS'"></span>
+    </div>
                                 <button @click="updateStatus(order.id, 'preparing')"
-                                    class="bg-orange-500 text-white px-6 py-2 rounded-xl font-bold hover:bg-orange-600">START</button>
+                                    class="bg-orange-500 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-orange-600 shadow-xl shadow-orange-500/10 transition-all active:scale-95" x-text="isArabic ? 'ابدأ' : 'START'"></button>
                             </div>
                         </div>
                     </template>
                 </div>
             </div>
 
-            <!-- Preparing -->
-            <div class="w-96 flex flex-col gap-6 h-full">
-                <div class="flex items-center justify-between border-b border-blue-500/30 pb-4">
-                    <h2 class="text-xl font-black italic text-blue-500 uppercase">Preparing</h2>
-                    <span class="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm font-black"
+            <!-- PREPARING -->
+            <div class="w-[28rem] flex flex-col gap-8 h-full">
+                <div class="flex items-center justify-between border-b-4 border-brand-500/20 pb-5">
+                    <h2 class="text-2xl font-black italic text-brand-500 uppercase tracking-tighter"
+                        x-text="isArabic ? 'قيد التحضير' : 'Preparing'"></h2>
+                    <span
+                        class="bg-brand-500 text-white w-10 h-10 flex items-center justify-center rounded-2xl text-xl font-black shadow-lg shadow-brand-500/20"
                         x-text="ordersByStatus('preparing').length"></span>
                 </div>
-                <div class="flex-1 overflow-y-auto space-y-4 no-scrollbar">
+                <div class="flex-1 overflow-y-auto space-y-6 no-scrollbar pb-20">
                     <template x-for="order in ordersByStatus('preparing')" :key="order.id">
                         <div
-                            class="bg-slate-800 border-l-8 border-blue-500 p-6 rounded-2xl shadow-xl relative overflow-hidden">
-                            <div
-                                class="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rotate-45 translate-x-12 -translate-y-12">
+                            class="bg-slate-900 border-l-[10px] border-brand-500 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden ring-1 ring-white/5">
+                            <div class="flex justify-between items-start mb-6">
+                                <span class="text-4xl font-black italic text-white tracking-tighter" x-text="'#' + order.order_no"></span>
+                                <span
+                                    class="px-3 py-1 bg-brand-500/20 rounded-xl text-[10px] font-black tracking-[0.2em] text-brand-500 uppercase"
+                                    x-text="order.type"></span>
                             </div>
-                            <div class="flex justify-between items-start mb-4">
-                                <span class="text-2xl font-black italic text-white"
-                                    x-text="'#' + order.order_no"></span>
-                                <span class="px-2 py-1 bg-blue-500/20 rounded text-[10px] font-bold text-blue-400"
-                                    x-text="order.type.toUpperCase()"></span>
-                            </div>
-                            <div class="space-y-3 mb-6">
+                        
+                            <div class="space-y-4 mb-8">
                                 <template x-for="item in order.items">
-                                    <div class="flex justify-between text-lg font-bold">
-                                        <span x-text="item.name"></span>
-                                        <span class="text-blue-500" x-text="'x' + item.qty"></span>
+                                    <div class="space-y-1">
+                                        <div class="flex justify-between items-baseline text-xl font-black">
+                                            <span x-text="item.name" class="text-white"></span>
+                                            <span class="text-brand-500 ml-4 font-black text-2xl" x-text="'x' + item.qty"></span>
+                                        </div>
+                                        <div class="text-xs font-bold text-slate-500 uppercase flex flex-col gap-1 pl-4"
+                                            x-show="item.variants || item.modifiers || item.notes">
+                                            <template x-if="item.variants">
+                                                <span class="text-slate-400" x-text="'• ' + (item.variants.name || item.variants)"></span>
+                                            </template>
+                                            <template x-for="m in item.modifiers">
+                                                <span class="text-slate-400" x-text="'• ' + (m.name || m)"></span>
+                                            </template>
+                                            <template x-if="item.notes">
+                                                <span class="text-yellow-500 italic bg-yellow-500/10 px-2 py-1 rounded" x-text="'💬 ' + item.notes"></span>
+                                            </template>
+                                        </div>
                                     </div>
                                 </template>
                             </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
-                                <span class="text-xs font-bold text-slate-500"
-                                    x-text="order.elapsed + ' MINS AGO'"></span>
+<div class="flex items-center justify-between pt-6 border-t border-white/5">
+    <div class="flex flex-col">
+        <span class="text-[10px] font-black text-slate-600 uppercase tracking-widest"
+            x-text="isArabic ? 'الوقت المنقضي' : 'ELAPSED TIME'"></span>
+        <span class="text-lg font-black italic tracking-tighter text-slate-400" x-text="order.elapsed + ' MINS'"></span>
+    </div>
                                 <button @click="updateStatus(order.id, 'ready')"
-                                    class="bg-blue-500 text-white px-6 py-2 rounded-xl font-bold hover:bg-blue-600">READY</button>
+                                    class="bg-brand-600 text-white px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-brand-700 shadow-xl shadow-brand-500/10 transition-all active:scale-95" x-text="isArabic ? 'جاهز' : 'READY'"></button>
                             </div>
                         </div>
                     </template>
                 </div>
             </div>
 
-            <!-- Ready -->
-            <div class="w-96 flex flex-col gap-6 h-full">
-                <div class="flex items-center justify-between border-b border-green-500/30 pb-4">
-                    <h2 class="text-xl font-black italic text-green-500 uppercase">Ready</h2>
-                    <span class="bg-green-500 text-white px-3 py-1 rounded-lg text-sm font-black"
+            <!-- READY -->
+            <div class="w-[28rem] flex flex-col gap-8 h-full">
+                <div class="flex items-center justify-between border-b-4 border-green-500/20 pb-5">
+                    <h2 class="text-2xl font-black italic text-green-500 uppercase tracking-tighter"
+                        x-text="isArabic ? 'جاهز للتسليم' : 'Ready'"></h2>
+                    <span
+                        class="bg-green-500 text-white w-10 h-10 flex items-center justify-center rounded-2xl text-xl font-black shadow-lg shadow-green-500/20"
                         x-text="ordersByStatus('ready').length"></span>
                 </div>
-                <div class="flex-1 overflow-y-auto space-y-4 no-scrollbar opacity-60">
+                <div class="flex-1 overflow-y-auto space-y-6 no-scrollbar pb-20 opacity-50">
                     <template x-for="order in ordersByStatus('ready')" :key="order.id">
-                        <div class="bg-slate-800 border-l-8 border-green-500 p-6 rounded-2xl shadow-xl">
-                            <div class="flex justify-between items-start mb-4">
-                                <span class="text-2xl font-black italic text-white"
-                                    x-text="'#' + order.order_no"></span>
+                        <div class="bg-slate-900 border-l-[10px] border-green-500 p-8 rounded-[2.5rem] shadow-xl relative overflow-hidden">
+                            <div class="flex justify-between items-center">
+                                <span class="text-4xl font-black italic text-white tracking-tighter" x-text="'#' + order.order_no"></span>
+                                <div class="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center text-green-500">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                        <path
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z">
+                                        </path>
+                                    </svg>
+                                </div>
                             </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
-                                <span class="text-xs font-bold text-slate-500 uppercase">Waiting Collection</span>
-                            </div>
+                            <div class="mt-4 text-[10px] font-black text-slate-500 uppercase tracking-widest"
+                                x-text="isArabic ? 'في انتظار العميل' : 'Waiting Collection'"></div>
                         </div>
                     </template>
                 </div>
@@ -144,8 +246,7 @@
         </div>
     </main>
 
-    <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"
-        preload="auto"></audio>
+    <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
         function kdsBoard() {
@@ -153,6 +254,7 @@
                 orders: [],
                 currentTime: '',
                 soundEnabled: true,
+                isArabic: false,
                 lastOrderCount: 0,
 
                 init() {
@@ -163,7 +265,18 @@
                 },
 
                 updateTime() {
-                    this.currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    const now = new Date();
+                    this.currentTime = now.toLocaleTimeString(this.isArabic ? 'ar-KW' : 'en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+                },
+
+                toggleFullscreen() {
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen();
+                    } else {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        }
+                    }
                 },
 
                 async refreshFeed() {

@@ -8,10 +8,16 @@
 
     <title>{{ $currentTenant->name ?? 'QR Kuwait' }}</title>
 
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#4F46E5">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Tajawal:wght@400;500;700;800&display=swap"
+        rel="stylesheet">
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,7 +26,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
+                        sans: ['Outfit', 'Tajawal', 'sans-serif'],
                     },
                     colors: {
                         brand: {
@@ -42,99 +48,113 @@
     </script>
 
     <style>
-        [x-cloak] {
-            display: none !important;
-        }
-
-        body {
-            font-family: 'Outfit', sans-serif;
-        }
-
+        [x-cloak] { display: none !important; }
+        
         .glass {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        input:focus { ring: 2px; ring-color: #3d56ff; }
     </style>
 
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
-<body class="bg-slate-50 text-slate-900 antialiased pb-20">
+<body class="bg-slate-50 text-slate-900 antialiased pb-20 font-sans"
+    x-data="{ cartCount: 0, isRtl: '{{ app()->getLocale() == 'ar' ? true : false }}' }" :dir="isRtl ? 'rtl' : 'ltr'"
+    @cart-updated.window="cartCount = $event.detail.count">
     <!-- Top Bar -->
-    <header class="sticky top-0 z-50 glass">
+    <header class="sticky top-0 z-50 glass shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center gap-3">
-                    <div
-                        class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-brand-200">
-                        {{ substr($currentTenant->name ?? 'Q', 0, 1) }}
-                    </div>
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-white rounded-2xl shadow-sm border border-slate-100 p-1.5 overflow-hidden">
+                        @if(isset($settings['logo']))
+                            <img src="{{ asset('storage/' . $settings['logo']) }}" class="w-full h-full object-contain">
+                        @else
+                            <div
+                                class="w-full h-full bg-brand-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                                {{ substr($currentTenant->name ?? 'Q', 0, 1) }}
+                            </div>
+                        @endif
+                        </div>
                     <div>
                         <h1 class="font-bold text-lg text-slate-900 leading-tight">
                             {{ $currentTenant->name ?? 'Store Name' }}</h1>
-                        <p class="text-xs text-slate-500 flex items-center gap-1">
-                            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                            Online Now
+                        <p class="text-[10px] text-slate-500 flex items-center gap-1 uppercase tracking-widest font-bold">
+                            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                            {{ __('Open Now') }}
                         </p>
                     </div>
                 </div>
-                <div class="flex items-center gap-4">
-                    <button class="p-2 text-slate-500 hover:text-brand-600 transition">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </button>
-                    <button class="relative p-2 text-slate-500 hover:text-brand-600 transition">
+                <div class="flex items-center gap-2">
+                    <a href="?lang={{ app()->getLocale() == 'en' ? 'ar' : 'en' }}"
+                        class="px-3 py-1.5 bg-white border border-slate-100 rounded-xl text-xs font-black uppercase hover:bg-slate-50 transition shadow-sm">
+                        {{ app()->getLocale() == 'en' ? 'العربية' : 'English' }}
+                    </a>
+                    <button
+                        class="relative w-12 h-12 flex items-center justify-center bg-brand-600 text-white rounded-2xl shadow-lg shadow-brand-100 hover:scale-105 transition"
+                        @click="$dispatch('open-cart')">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M16 11V7a4 4 0 00-8 0v4M5 11h14l1 12H4l1-12z"></path>
                         </svg>
-                        <span
-                            class="absolute top-1 right-1 w-4 h-4 bg-brand-600 text-[10px] font-bold text-white rounded-full flex items-center justify-center">0</span>
+                        <span x-show="cartCount > 0"
+                            class="absolute -top-1 -right-1 w-5 h-5 bg-white text-brand-600 text-[10px] font-black rounded-full flex items-center justify-center shadow-md animate-bounce"
+                            x-text="cartCount"></span>
                     </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 min-h-screen">
         @yield('content')
     </main>
 
-    <!-- Bottom Nav (Mobile Inspired) -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-6 py-3 block sm:hidden z-50">
-        <div class="flex justify-between items-center">
+    <!-- Bottom Nav (Enhanced) -->
+    <nav class="fixed bottom-6 left-6 right-6 glass rounded-3xl px-6 py-4 sm:hidden z-50 shadow-2xl overflow-hidden">
+        <div class="flex justify-between items-center relative z-10">
             <a href="#" class="flex flex-col items-center gap-1 text-brand-600">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z" />
+                    <path
+                        d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75v4.5a.75.75 0 01-.75.75H5.719c-1.035 0-1.875-.84-1.875-1.875V13.677c.031-.028.062-.056.091-.086L12 5.432z" />
+                </svg>
+                <span class="text-[9px] font-black uppercase tracking-tighter">{{ __('Home') }}</span>
+            </a>
+            <button @click="$dispatch('open-search')" class="flex flex-col items-center gap-1 text-slate-400">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span class="text-[9px] font-black uppercase tracking-tighter">{{ __('Search') }}</span>
+                </button>
+                <button @click="$dispatch('open-cart')" class="flex flex-col items-center gap-1 text-slate-400 relative">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 11h14l1 12H4l1-12z">
                     </path>
                 </svg>
-                <span class="text-[10px] font-medium">Home</span>
-            </a>
-            <a href="#" class="flex flex-col items-center gap-1 text-slate-400">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
-                    </path>
-                </svg>
-                <span class="text-[10px] font-medium">Menu</span>
-            </a>
+                <span x-show="cartCount > 0"
+                    class="absolute -top-1 -right-1 w-4 h-4 bg-brand-600 text-white text-[8px] rounded-full flex items-center justify-center font-bold"
+                    x-text="cartCount"></span>
+                <span class="text-[9px] font-black uppercase tracking-tighter">{{ __('Order') }}</span>
+                </button>
             <a href="#" class="flex flex-col items-center gap-1 text-slate-400">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M16 11V7a4 4 0 00-8 0v4M5 11h14l1 12H4l1-12z"></path>
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 </svg>
-                <span class="text-[10px] font-medium">Cart</span>
-            </a>
-            <a href="#" class="flex flex-col items-center gap-1 text-slate-400">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                </svg>
-                <span class="text-[10px] font-medium">Profile</span>
+                <span class="text-[9px] font-black uppercase tracking-tighter">{{ __('Track') }}</span>
             </a>
         </div>
     </nav>

@@ -17,6 +17,13 @@ class Tenant extends Model
         'status',
         'default_language',
         'timezone',
+        'api_key',
+        'settings',
+        'currency',
+    ];
+
+    protected $casts = [
+        'settings' => 'array',
     ];
 
     public function branches()

@@ -82,20 +82,27 @@
                             <h3 class="text-xl font-black italic">Order Timeline</h3>
                         </div>
                         <div class="p-8 space-y-6">
-                            @foreach($order->statusLogs as $log)
+                            @forelse($order->statusLogs as $log)
                                 <div class="flex gap-4">
                                     <div class="flex flex-col items-center">
                                         <div class="w-3 h-3 bg-indigo-600 rounded-full"></div>
-                                        <div class="w-0.5 h-full bg-indigo-100"></div>
+                                        @if(!$loop->last)
+                                            <div class="w-0.5 flex-1 bg-indigo-100 mt-2"></div>
+                                        @endif
                                     </div>
-                                    <div>
+                                    <div class="flex-1">
                                         <div class="text-sm font-black uppercase tracking-widest text-indigo-600">
                                             {{ $log->to_status }}</div>
                                         <div class="text-xs text-gray-400 mt-1">{{ $log->created_at->format('M d, Y H:i') }}
-                                            • {{ $log->user ? $log->user->name : 'Customer (System)' }}</div>
+                                            • {{ $log->user ? $log->user->name : 'System' }}</div>
                                     </div>
                                 </div>
-                            @endforeach
+                            @empty
+                                <div class="text-center py-8 text-gray-400">
+                                    <p class="font-bold">No status updates yet</p>
+                                    <p class="text-xs mt-2">Order is in {{ $order->status }} status</p>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>

@@ -45,23 +45,31 @@ class Tenant extends Model
 
     public function getSetting($key, $default = null)
     {
-        // Use loaded relationship to avoid N+1 and naming conflicts
-        $settings = $this->relationLoaded('customSettings')
-            ? $this->customSettings
-            : $this->customSettings();
+        // Check if relationship is loaded
+        if ($this->relationLoaded('customSettings')) {
+            $setting = $this->customSettings->where('key', $key)->first();
+            return $setting ? $setting->value : $default;
+        }
 
-        $setting = $settings->where('key', $key)->first();
+        // Otherwise query the database
+        $setting = $this->customSettings()->where('key', $key)->first();
         return $setting ? $setting->value : $default;
     }
 
     public function getSettingUrl($key, $default = null)
     {
         $value = $this->getSetting($key);
-        if (!$value)
+
+        if (!$value) {
             return $default;
+        }
+
+        // If it's already a full URL, return it
         if (filter_var($value, FILTER_VALIDATE_URL)) {
             return $value;
         }
+
+        // Otherwise, treat it as a storage path
         return asset('storage/' . $value);
     }
 

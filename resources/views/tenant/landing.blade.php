@@ -389,7 +389,8 @@
                 },
 
                 formatPrice(price) {
-                    return parseFloat(price || 0).toFixed(3);
+                    const num = parseFloat(price);
+                    return isNaN(num) ? '0.000' : num.toFixed(3);
                 },
 
                 toggleModifier(mod) {
@@ -414,9 +415,17 @@
                 },
 
                 addToCart() {
-                    let finalPrice = parseFloat(this.selectedItem.price);
-                    if (this.activeVariant) finalPrice += parseFloat(this.activeVariant.price);
-                    this.activeModifiers.forEach(m => finalPrice += parseFloat(m.price));
+                    if (!this.selectedItem) return;
+
+                    // Validate variant selection if required
+                    if (this.selectedItem.variants && this.selectedItem.variants.length && !this.activeVariant) {
+                        alert('Please select an option');
+                        return;
+                    }
+
+                    let finalPrice = parseFloat(this.selectedItem.price) || 0;
+                    if (this.activeVariant) finalPrice += parseFloat(this.activeVariant.price) || 0;
+                    this.activeModifiers.forEach(m => finalPrice += parseFloat(m.price) || 0);
 
                     const cartKey = `${this.selectedItem.id}-${this.activeVariant?.id || '0'}-${this.activeModifiers.map(m => m.id).sort().join(',')}-${this.itemNote}`;
 
@@ -429,7 +438,8 @@
                             id: this.selectedItem.id,
                             name: this.getLocName(this.selectedItem),
                             image: this.selectedItem.image,
-                            basePrice: parseFloat(this.selectedItem.price),
+                            image_url: this.selectedItem.image_url || '',
+                            basePrice: parseFloat(this.selectedItem.price) || 0,
                             price: finalPrice,
                             qty: this.modalQty,
                             variant: this.activeVariant ? { id: this.activeVariant.id, name: this.getLocName(this.activeVariant) } : null,

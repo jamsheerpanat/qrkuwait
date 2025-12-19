@@ -90,4 +90,5 @@ Route::middleware(['tenant'])->group(function () {
         ->middleware('throttle:5,1') // 5 orders per minute per IP
         ->name('tenant.checkout.store');
     Route::get('/{tenant_slug}/order/{order_no}/success', [\App\Http\Controllers\Public\CheckoutController::class, 'success'])->name('tenant.checkout.success');
+    Route::post('/{tenant_slug}/order/{order_no}/upload-payment', [\App\Http\Controllers\Public\CheckoutController::class, 'uploadPayment'])->name('tenant.order.upload-payment');
 });

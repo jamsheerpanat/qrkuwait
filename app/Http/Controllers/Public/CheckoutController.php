@@ -92,3 +92,34 @@ class CheckoutController extends Controller
         return view('tenant.success', compact('tenant', 'order', 'waUrl'));
     }
 }
+
+    public function uploadPayment(Request $request, $tenant_slug, $order_no)
+    {
+        $tenant = $request->attributes->get('tenant');
+        
+        $request->validate([
+            'payment_screenshot' => 'required|image|mimes:jpeg,png,jpg|max:5120', // 5MB max
+        ]);
+
+        $order = \App\Models\Order::where('tenant_id', $tenant->id)
+            ->where('order_no', $order_no)
+            ->firstOrFail();
+
+        if ($request->hasFile('payment_screenshot')) {
+            // Delete old screenshot if exists
+            if ($order->payment_screenshot && \Storage::disk('public')->exists($order->payment_screenshot)) {
+                \Storage::disk('public')->delete($order->payment_screenshot);
+            }
+
+            // Store new screenshot
+            $path = $request->file('payment_screenshot')->store('payment_screenshots', 'public');
+            $order->payment_screenshot = $path;
+            $order->payment_status = 'submitted';
+            $order->save();
+
+            return back()->with('success', 'Payment screenshot uploaded successfully!');
+        }
+
+        return back()->withErrors(['payment_screenshot' => 'Failed to upload screenshot.']);
+    }
+}

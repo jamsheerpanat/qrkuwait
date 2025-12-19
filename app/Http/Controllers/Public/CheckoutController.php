@@ -91,7 +91,6 @@ class CheckoutController extends Controller
 
         return view('tenant.success', compact('tenant', 'order', 'waUrl'));
     }
-}
 
     public function uploadPayment(Request $request, $tenant_slug, $order_no)
     {

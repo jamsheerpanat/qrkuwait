@@ -113,6 +113,65 @@
                                     placeholder="e.g. 24">
                             </div>
                         </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <x-input-label for="building" :value="__('Building Name/Number')"
+                                    class="text-[10px] uppercase font-bold text-slate-400 mb-1" />
+                                <input type="text" name="building"
+                                    class="w-full bg-slate-50 border-none rounded-xl p-3 font-bold shadow-inner text-sm"
+                                    placeholder="e.g. Al Noor Tower">
+                            </div>
+                            <div>
+                                <x-input-label for="paci" :value="__('PACI Number')"
+                                    class="text-[10px] uppercase font-bold text-slate-400 mb-1" />
+                                <input type="text" name="paci"
+                                    class="w-full bg-slate-50 border-none rounded-xl p-3 font-bold shadow-inner text-sm"
+                                    placeholder="e.g. 12345678901">
+                            </div>
+                        </div>
+                        <div>
+                            <x-input-label for="landmark" :value="__('Landmark')" class="text-[10px] uppercase font-bold text-slate-400 mb-1" />
+                            <input type="text" name="landmark"
+                                class="w-full bg-slate-50 border-none rounded-xl p-3 font-bold shadow-inner text-sm"
+                                placeholder="e.g. Near Sultan Center">
+                        </div>
+                        </div>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 space-y-6">
+                            <h3 class="text-xl font-bold flex items-center gap-3">
+                                <span
+                                    class="w-10 h-10 bg-brand-100 text-brand-600 rounded-xl flex items-center justify-center text-sm">03</span>
+                                Payment Method
+                            </h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <label class="relative cursor-pointer group">
+                                    <input type="radio" name="payment_method" value="cash" x-model="paymentMethod" class="sr-only peer" checked>
+                                    <div
+                                        class="p-6 rounded-3xl border-2 border-slate-100 peer-checked:border-brand-600 peer-checked:bg-brand-50 transition-all text-center">
+                                        <svg class="w-8 h-8 mx-auto mb-2 text-slate-400 peer-checked:text-brand-600" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                                            </path>
+                                        </svg>
+                                        <span class="font-bold block">Cash</span>
+                                    </div>
+                                </label>
+                                <label class="relative cursor-pointer group">
+                                    <input type="radio" name="payment_method" value="knet" x-model="paymentMethod" class="sr-only peer">
+                                    <div
+                                        class="p-6 rounded-3xl border-2 border-slate-100 peer-checked:border-brand-600 peer-checked:bg-brand-50 transition-all text-center">
+                                        <svg class="w-8 h-8 mx-auto mb-2 text-slate-400 peer-checked:text-brand-600" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                                            </path>
+                                        </svg>
+                                        <span class="font-bold block">KNET</span>
+                                    </div>
+                                </label>
                     </div>
                 </div>
 
@@ -125,7 +184,7 @@
                 <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 space-y-6">
                     <h3 class="text-xl font-bold flex items-center gap-3">
                         <span
-                            class="w-10 h-10 bg-brand-100 text-brand-600 rounded-xl flex items-center justify-center text-sm">03</span>
+                            class="w-10 h-10 bg-brand-100 text-brand-600 rounded-xl flex items-center justify-center text-sm">04</span>
                         Order Notes
                     </h3>
                     <textarea name="notes" rows="3"
@@ -156,6 +215,7 @@
             return {
                 cart: [],
                 deliveryType: 'pickup',
+                paymentMethod: 'cash',
                 total: 0,
 
                 init() {

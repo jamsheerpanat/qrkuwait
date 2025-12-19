@@ -29,6 +29,7 @@ class CheckoutController extends Controller
             'area' => 'required_if:delivery_type,delivery',
             'block' => 'required_if:delivery_type,delivery',
             'house' => 'required_if:delivery_type,delivery',
+            'payment_method' => 'required|in:cash,knet',
             'cart_data' => 'required|json',
         ]);
 
@@ -63,10 +64,14 @@ class CheckoutController extends Controller
                 'block' => $request->block,
                 'street' => $request->street,
                 'house' => $request->house,
+                'building' => $request->building,
+                'landmark' => $request->landmark,
+                'paci' => $request->paci,
                 'extra' => $request->extra,
             ] : null,
             'subtotal' => $subtotal,
             'total' => $subtotal, // Delivery fee logic later
+            'payment_method' => $request->payment_method,
             'notes' => $request->notes,
         ], $items, $tenant->id);
 

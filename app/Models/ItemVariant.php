@@ -32,4 +32,10 @@ class ItemVariant extends Model
         $locale = app()->getLocale();
         return $this->name[$locale] ?? ($this->name['en'] ?? '');
     }
+
+    // Accessor for frontend compatibility (price_diff as price)
+    public function getPriceAttribute()
+    {
+        return $this->price_diff ?? 0;
+    }
 }

@@ -41,6 +41,12 @@ Route::middleware(['auth', 'tenant'])->prefix('admin')->name('admin.')->group(fu
     Route::resource('categories', \App\Http\Controllers\Admin\CategoryController::class);
     Route::resource('items', \App\Http\Controllers\Admin\ItemController::class);
 
+    // Item Variants & Add-ons
+    Route::post('/items/{id}/variants', [\App\Http\Controllers\Admin\ItemController::class, 'saveVariants'])->name('items.variants.save');
+    Route::delete('/items/{id}/variants/{variantId}', [\App\Http\Controllers\Admin\ItemController::class, 'deleteVariant'])->name('items.variants.delete');
+    Route::post('/items/{id}/addons', [\App\Http\Controllers\Admin\ItemController::class, 'saveAddons'])->name('items.addons.save');
+    Route::delete('/items/{id}/addons/{addonId}', [\App\Http\Controllers\Admin\ItemController::class, 'deleteAddon'])->name('items.addons.delete');
+
     // QR Management
     Route::get('/qr', [\App\Http\Controllers\Admin\QRController::class, 'index'])->name('qr.index');
     Route::get('/qr/download', [\App\Http\Controllers\Admin\QRController::class, 'download'])->name('qr.download');

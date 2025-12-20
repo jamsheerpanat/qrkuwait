@@ -12,12 +12,14 @@ class ItemModifier extends Model
     protected $fillable = [
         'item_id',
         'name',
+        'price',
         'type',
         'is_required',
     ];
 
     protected $casts = [
         'name' => 'array',
+        'price' => 'decimal:3',
         'is_required' => 'boolean',
     ];
 

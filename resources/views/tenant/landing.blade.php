@@ -301,7 +301,7 @@
                     </template>
                 </div>
 
-                <div class="p-8 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-6">
+                <div class="p-8 pb-24 sm:pb-8 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-6">
                     <div class="flex flex-col">
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ __('Total Order') }}</span>
                         <span class="text-2xl font-bold text-slate-900" x-text="formatPrice(calculateCartTotal())"></span>
@@ -449,7 +449,18 @@
                     }
                     this.saveCart();
                     this.showModal = false;
-                    this.showCart = true;
+                    // Don't auto-open cart - let user continue shopping
+                    // Show a quick toast confirmation instead
+                    this.showAddedToast();
+                },
+
+                showAddedToast() {
+                    // Create and show a quick toast
+                    const toast = document.createElement('div');
+                    toast.className = 'fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full text-sm font-bold z-[200] shadow-2xl';
+                    toast.innerHTML = '✓ {{ __('Added to cart') }}';
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 1500);
                 },
 
                 updateCartQty(index, delta) {

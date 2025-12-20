@@ -45,6 +45,8 @@ class KDSController extends Controller
                     'order_no' => $order->order_no,
                     'status' => $order->status,
                     'type' => $order->delivery_type,
+                    'table_number' => $order->table_number,
+                    'source' => $order->source ?? 'customer', // customer, waiter, pos
                     'elapsed' => $order->created_at->diffInMinutes(now()),
                     'notes' => $order->notes,
                     'items' => $order->items->map(fn($i) => [

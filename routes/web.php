@@ -80,6 +80,11 @@ Route::middleware(['auth', 'tenant'])->prefix('admin')->name('admin.')->group(fu
     Route::post('/pos/status/{id}', [\App\Http\Controllers\Admin\POSController::class, 'updateOrderStatus'])->name('pos.status');
     Route::get('/pos/receipt/{id}', [\App\Http\Controllers\Admin\POSController::class, 'printReceipt'])->name('pos.receipt');
 
+    // Waiter Order System (Table Service)
+    Route::get('/waiter', [\App\Http\Controllers\Admin\WaiterController::class, 'index'])->name('waiter.index');
+    Route::post('/waiter/order', [\App\Http\Controllers\Admin\WaiterController::class, 'createOrder'])->name('waiter.order');
+    Route::get('/waiter/table/{table}', [\App\Http\Controllers\Admin\WaiterController::class, 'tableOrders'])->name('waiter.table');
+
 });
 
 // API for POS (Token Based)

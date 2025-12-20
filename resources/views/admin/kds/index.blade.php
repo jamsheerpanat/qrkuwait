@@ -109,9 +109,22 @@
                         <div
                             class="bg-slate-900 border-l-[10px] border-orange-500 p-8 rounded-[2.5rem] shadow-2xl hover:scale-[1.02] transition-transform duration-300 relative overflow-hidden ring-1 ring-white/5">
                             <div class="flex justify-between items-start mb-6">
-                                <span class="text-4xl font-black italic text-white tracking-tighter" x-text="'#' + order.order_no"></span>
-                                <span class="px-3 py-1 bg-white/10 rounded-xl text-[10px] font-black tracking-[0.2em] text-orange-500 uppercase"
-                                    x-text="order.type"></span>
+                                <div>
+                                    <span class="text-4xl font-black italic text-white tracking-tighter" x-text="'#' + order.order_no"></span>
+                                    <template x-if="order.table_number">
+                                        <div class="mt-2 inline-flex items-center gap-2 bg-amber-500/20 text-amber-400 px-3 py-1 rounded-xl">
+                                            <span class="text-2xl">🍽️</span>
+                                            <span class="font-black text-lg" x-text="'Table ' + order.table_number"></span>
+                                        </div>
+                                    </template>
+                                    </div>
+                                    <div class="flex flex-col items-end gap-2">
+                                    <span class="px-3 py-1 bg-white/10 rounded-xl text-[10px] font-black tracking-[0.2em] text-orange-500 uppercase"
+                                        x-text="order.table_number ? 'DINE-IN' : order.type"></span>
+                                    <template x-if="order.source === 'waiter'">
+                                        <span class="px-2 py-1 bg-purple-500/20 text-purple-400 rounded-lg text-[10px] font-black">WAITER</span>
+                                    </template>
+                                </div>
                             </div>
                             <div class="space-y-4 mb-8">
                                 <template x-for="item in order.items">
@@ -173,10 +186,18 @@
                         <div
                             class="bg-slate-900 border-l-[10px] border-brand-500 p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden ring-1 ring-white/5">
                             <div class="flex justify-between items-start mb-6">
-                                <span class="text-4xl font-black italic text-white tracking-tighter" x-text="'#' + order.order_no"></span>
+                                <div>
+                                    <span class="text-4xl font-black italic text-white tracking-tighter" x-text="'#' + order.order_no"></span>
+                                    <template x-if="order.table_number">
+                                        <div class="mt-2 inline-flex items-center gap-2 bg-amber-500/20 text-amber-400 px-3 py-1 rounded-xl">
+                                            <span class="text-2xl">🍽️</span>
+                                            <span class="font-black text-lg" x-text="'Table ' + order.table_number"></span>
+                                        </div>
+                                    </template>
+                                    </div>
                                 <span
                                     class="px-3 py-1 bg-brand-500/20 rounded-xl text-[10px] font-black tracking-[0.2em] text-brand-500 uppercase"
-                                    x-text="order.type"></span>
+                                    x-text="order.table_number ? 'DINE-IN' : order.type"></span>
                             </div>
                         
                             <div class="space-y-4 mb-8">

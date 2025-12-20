@@ -25,20 +25,12 @@ Route::middleware('auth')->group(function () {
 
 // Super Admin Routes
 Route::middleware(['auth', 'role:super_admin'])->prefix('super')->group(function () {
-    Route::get('/', function () {
-        $stats = [
-            'total_tenants' => \App\Models\Tenant::count(),
-            'active_tenants' => \App\Models\Tenant::where('status', 'active')->count(),
-            'total_orders' => \App\Models\Order::count(),
-            'total_users' => \App\Models\User::count(),
-        ];
-        $recentTenants = \App\Models\Tenant::latest()->limit(5)->get();
-        return view('super.dashboard', compact('stats', 'recentTenants'));
-    })->name('super.dashboard');
+    Route::get('/', [\App\Http\Controllers\Super\DashboardController::class, 'index'])->name('super.dashboard');
 
     Route::resource('tenants', \App\Http\Controllers\Super\TenantController::class)->names('super.tenants');
     Route::resource('users', \App\Http\Controllers\Super\UserController::class)->names('super.users');
 });
+
 
 // Tenant Specific Routes (Admin/Staff)
 Route::middleware(['auth', 'tenant'])->prefix('admin')->name('admin.')->group(function () {

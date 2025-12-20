@@ -64,6 +64,15 @@ Route::middleware(['auth', 'tenant'])->prefix('admin')->name('admin.')->group(fu
     Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->middleware('role:tenant_admin')->name('reports.index');
     Route::get('/reports/export', [\App\Http\Controllers\Admin\ReportController::class, 'export'])->middleware('role:tenant_admin')->name('reports.export');
 
+    // POS System
+    Route::get('/pos', [\App\Http\Controllers\Admin\POSController::class, 'index'])->name('pos.index');
+    Route::get('/pos/items', [\App\Http\Controllers\Admin\POSController::class, 'items'])->name('pos.items');
+    Route::get('/pos/pending', [\App\Http\Controllers\Admin\POSController::class, 'pendingOrders'])->name('pos.pending');
+    Route::get('/pos/count', [\App\Http\Controllers\Admin\POSController::class, 'orderCount'])->name('pos.count');
+    Route::post('/pos/create', [\App\Http\Controllers\Admin\POSController::class, 'createOrder'])->name('pos.create');
+    Route::post('/pos/accept/{id}', [\App\Http\Controllers\Admin\POSController::class, 'acceptOrder'])->name('pos.accept');
+    Route::post('/pos/status/{id}', [\App\Http\Controllers\Admin\POSController::class, 'updateOrderStatus'])->name('pos.status');
+    Route::get('/pos/receipt/{id}', [\App\Http\Controllers\Admin\POSController::class, 'printReceipt'])->name('pos.receipt');
 
 });
 

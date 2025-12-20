@@ -27,6 +27,9 @@
                         <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
                             {{ __('Orders') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.pos.index')" :active="request()->routeIs('admin.pos.*')">
+                            {{ __('POS') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('admin.kds.index')" :active="request()->routeIs('admin.kds.*')">
                             {{ __('KDS') }}
                         </x-nav-link>
@@ -123,6 +126,9 @@
             @else
                 <x-responsive-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
                     {{ __('Orders') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.pos.index')" :active="request()->routeIs('admin.pos.*')">
+                    {{ __('POS') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.kds.index')" :active="request()->routeIs('admin.kds.*')">
                     {{ __('KDS') }}

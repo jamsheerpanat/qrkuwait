@@ -104,25 +104,241 @@
                     </div>
                 </form>
             </div>
-<!-- Note about Variants - Coming Soon -->
+
             @if(isset($item))
-                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6">
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                            <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
+                <!-- Variants Section -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-gray-100 p-8" x-data="variantsManager()">
+                    <div class="flex justify-between items-center mb-6">
                         <div>
-                            <h3 class="font-bold text-amber-800">{{ __('Variants & Add-ons Coming Soon') }}</h3>
-                            <p class="text-sm text-amber-700 mt-1">
-                                {{ __('Size/flavor variants and optional add-ons feature will be available after the next database update.') }}
-                            </p>
+                            <h3 class="text-lg font-bold text-gray-900">{{ __('Variants (Sizes/Options)') }}</h3>
+                            <p class="text-sm text-gray-500">{{ __('Add size or flavor options. Customers must choose one.') }}</p>
                         </div>
+                        <button type="button" @click="addVariant()"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            {{ __('Add Variant') }}
+                        </button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <template x-for="(variant, index) in variants" :key="index">
+                            <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                                <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <input type="text" x-model="variant.name_en" placeholder="Name (English)"
+                                        class="rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                    <input type="text" x-model="variant.name_ar" placeholder="Name (Arabic)" dir="rtl"
+                                        class="rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm text-gray-500">+</span>
+                                        <input type="number" x-model="variant.price" step="0.001" placeholder="0.000"
+                                            class="flex-1 rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                        <span class="text-sm text-gray-500">KWD</span>
+                                    </div>
+                                </div>
+                                <button type="button" @click="removeVariant(index)"
+                                    class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div x-show="variants.length > 0" class="mt-4 flex justify-end">
+                        <button type="button" @click="saveVariants()"
+                            class="px-6 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition"
+                            :disabled="saving">
+                            <span x-show="!saving">{{ __('Save Variants') }}</span>
+                            <span x-show="saving">{{ __('Saving...') }}</span>
+                        </button>
+                    </div>
+
+                    <div x-show="variants.length === 0" class="text-center py-8 text-gray-400">
+                        <p>{{ __('No variants added yet. Click "Add Variant" to create size or flavor options.') }}</p>
+                    </div>
+                </div>
+
+                <!-- Add-ons Section -->
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-gray-100 p-8" x-data="addonsManager()">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">{{ __('Add-ons (Extras)') }}</h3>
+                            <p class="text-sm text-gray-500">{{ __('Optional extras customers can add to their order.') }}</p>
+                        </div>
+                        <button type="button" @click="addAddon()"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-bold hover:bg-purple-700 transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                            </svg>
+                            {{ __('Add Extra') }}
+                        </button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <template x-for="(addon, index) in addons" :key="index">
+                            <div class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
+                                <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <input type="text" x-model="addon.name_en" placeholder="Name (English)"
+                                        class="rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                    <input type="text" x-model="addon.name_ar" placeholder="Name (Arabic)" dir="rtl"
+                                        class="rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm text-gray-500">+</span>
+                                        <input type="number" x-model="addon.price" step="0.001" placeholder="0.000"
+                                            class="flex-1 rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 text-sm">
+                                        <span class="text-sm text-gray-500">KWD</span>
+                                    </div>
+                                </div>
+                                <button type="button" @click="removeAddon(index)"
+                                    class="p-2 text-red-500 hover:bg-red-50 rounded-lg transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div x-show="addons.length > 0" class="mt-4 flex justify-end">
+                        <button type="button" @click="saveAddons()"
+                            class="px-6 py-2 bg-emerald-600 text-white rounded-xl text-sm font-bold hover:bg-emerald-700 transition"
+                            :disabled="saving">
+                            <span x-show="!saving">{{ __('Save Add-ons') }}</span>
+                            <span x-show="saving">{{ __('Saving...') }}</span>
+                        </button>
+                    </div>
+
+                    <div x-show="addons.length === 0" class="text-center py-8 text-gray-400">
+                        <p>{{ __('No add-ons yet. Click "Add Extra" to create optional extras like cheese, sauce, etc.') }}</p>
                     </div>
                 </div>
             @endif
         </div>
     </div>
+@if(isset($item))
+    <script>
+        function variantsManager() {
+            return {
+                variants: @json($item->variants ?? []),
+                saving: false,
+
+                init() {
+                    // Transform existing variants to editable format
+                    this.variants = this.variants.map(v => ({
+                        id: v.id,
+                        name_en: v.name?.en || '',
+                        name_ar: v.name?.ar || '',
+                        price: v.price_diff || 0
+                    }));
+                },
+
+                addVariant() {
+                    this.variants.push({ id: null, name_en: '', name_ar: '', price: 0 });
+                },
+
+                removeVariant(index) {
+                    const variant = this.variants[index];
+                    if (variant.id) {
+                        fetch(`/admin/items/{{ $item->id }}/variants/${variant.id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        });
+                    }
+                    this.variants.splice(index, 1);
+                },
+
+                async saveVariants() {
+                    this.saving = true;
+                    try {
+                        const response = await fetch('/admin/items/{{ $item->id }}/variants', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ variants: this.variants })
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            this.variants = data.variants;
+                            alert('Variants saved successfully!');
+                        }
+                    } catch (e) {
+                        alert('Failed to save variants');
+                    }
+                    this.saving = false;
+                }
+            }
+        }
+
+        function addonsManager() {
+            return {
+                addons: @json($item->modifiers ?? []),
+                saving: false,
+
+                init() {
+                    // Transform existing addons to editable format
+                    this.addons = this.addons.map(m => ({
+                        id: m.id,
+                        name_en: m.name?.en || '',
+                        name_ar: m.name?.ar || '',
+                        price: m.price || 0
+                    }));
+                },
+
+                addAddon() {
+                    this.addons.push({ id: null, name_en: '', name_ar: '', price: 0 });
+                },
+
+                removeAddon(index) {
+                    const addon = this.addons[index];
+                    if (addon.id) {
+                        fetch(`/admin/items/{{ $item->id }}/addons/${addon.id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        });
+                    }
+                    this.addons.splice(index, 1);
+                },
+
+                async saveAddons() {
+                    this.saving = true;
+                    try {
+                        const response = await fetch('/admin/items/{{ $item->id }}/addons', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ addons: this.addons })
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            this.addons = data.addons;
+                            alert('Add-ons saved successfully!');
+                        }
+                    } catch (e) {
+                        alert('Failed to save add-ons');
+                    }
+                    this.saving = false;
+                }
+            }
+        }
+    </script>
+@endif
 </x-app-layout>

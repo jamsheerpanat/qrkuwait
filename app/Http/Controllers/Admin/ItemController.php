@@ -70,7 +70,7 @@ class ItemController extends Controller
     public function edit(Request $request, string $id)
     {
         $tenant = $request->attributes->get('tenant');
-        $item = Item::where('tenant_id', $tenant->id)->findOrFail($id);
+        $item = Item::where('tenant_id', $tenant->id)->with(['variants', 'modifiers'])->findOrFail($id);
         $categories = Category::where('tenant_id', $tenant->id)->get();
         return view('admin.items.edit', compact('item', 'categories'));
     }

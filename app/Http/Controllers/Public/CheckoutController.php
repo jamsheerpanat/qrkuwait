@@ -22,16 +22,29 @@ class CheckoutController extends Controller
             return response()->json(['message' => 'Spam detected'], 422);
         }
 
-        $request->validate([
-            'customer_name' => 'required|string|max:255',
-            'customer_mobile' => ['required', 'string', 'regex:/^(\+?965)?[0-9]{8}$/'],
-            'delivery_type' => 'required|in:pickup,delivery',
-            'area' => 'required_if:delivery_type,delivery',
-            'block' => 'required_if:delivery_type,delivery',
-            'house' => 'required_if:delivery_type,delivery',
-            'payment_method' => 'required|in:cash,knet',
-            'cart_data' => 'required|json',
-        ]);
+        // Check if this is a table order (dine-in)
+        $isTableOrder = $request->delivery_type === 'dine_in' || $request->filled('table_number');
+
+        // Different validation for table orders vs regular orders
+        if ($isTableOrder) {
+            $request->validate([
+                'customer_mobile' => ['required', 'string', 'regex:/^(\+?965)?[0-9]{8}$/'],
+                'table_number' => 'required|string|max:10',
+                'payment_method' => 'required|in:pay_later,knet,cash',
+                'cart_data' => 'required|json',
+            ]);
+        } else {
+            $request->validate([
+                'customer_name' => 'required|string|max:255',
+                'customer_mobile' => ['required', 'string', 'regex:/^(\+?965)?[0-9]{8}$/'],
+                'delivery_type' => 'required|in:pickup,delivery',
+                'area' => 'required_if:delivery_type,delivery',
+                'block' => 'required_if:delivery_type,delivery',
+                'house' => 'required_if:delivery_type,delivery',
+                'payment_method' => 'required|in:cash,knet',
+                'cart_data' => 'required|json',
+            ]);
+        }
 
         $cart = json_decode($request->cart_data, true);
         if (empty($cart)) {
@@ -56,9 +69,10 @@ class CheckoutController extends Controller
 
         $orderService = app(\App\Services\OrderService::class);
         $order = $orderService->createOrder([
-            'customer_name' => $request->customer_name,
+            'customer_name' => $request->customer_name ?? 'Table ' . $request->table_number,
             'customer_mobile' => $request->customer_mobile,
-            'delivery_type' => $request->delivery_type,
+            'delivery_type' => $isTableOrder ? 'dine_in' : $request->delivery_type,
+            'table_number' => $request->table_number,
             'address' => $request->delivery_type === 'delivery' ? [
                 'area' => $request->area,
                 'block' => $request->block,

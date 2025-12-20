@@ -16,6 +16,7 @@ class Order extends Model
         'customer_name',
         'customer_mobile',
         'delivery_type',
+        'table_number',
         'address',
         'subtotal',
         'delivery_fee',

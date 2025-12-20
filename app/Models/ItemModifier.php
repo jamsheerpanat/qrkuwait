@@ -19,7 +19,6 @@ class ItemModifier extends Model
 
     protected $casts = [
         'name' => 'array',
-        'price' => 'decimal:3',
         'is_required' => 'boolean',
     ];
 

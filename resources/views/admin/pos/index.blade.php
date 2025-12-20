@@ -76,10 +76,16 @@
             color: var(--text-muted);
             font-weight: 600;
         }
-        .pos-back {
+        .pos-actions {
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+        .pos-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
             padding: 8px 12px;
             background: var(--card-hover);
             border-radius: 8px;
@@ -87,10 +93,31 @@
             text-decoration: none;
             font-size: 12px;
             font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s;
         }
-        .pos-back:hover {
+        .pos-btn:hover {
             background: var(--primary);
             color: white;
+        }
+        .pos-btn.active {
+            background: var(--success);
+            color: white;
+        }
+        .pos-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+        .kbd {
+            display: inline-block;
+            padding: 2px 6px;
+            background: var(--bg);
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-left: 6px;
+            opacity: 0.7;
         }
         
         /* Search Bar */
@@ -132,12 +159,17 @@
             font-weight: 600;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.15s;
+            transition: all 0.1s;
         }
         .cat-btn:hover { background: var(--card-hover); }
         .cat-btn.active {
             background: var(--primary);
             color: white;
+        }
+        .cat-btn .kbd {
+            background: rgba(255,255,255,0.2);
+            font-size: 9px;
+            margin-left: 4px;
         }
         
         /* Items Grid */
@@ -554,9 +586,27 @@
                     <img src="{{ asset('images/qrkuwait-logo.png') }}" alt="QRKuwait">
                     <span class="store-name">{{ $tenant->name }}</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <a href="{{ route('admin.dashboard') }}" class="pos-back">
-                        ← Dashboard
+                <div class="pos-actions">
+                    <button class="pos-btn" onclick="toggleFullscreen()" title="Toggle Fullscreen (F11)">
+                        <svg id="fullscreenIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                        </svg>
+                        <span class="kbd">F11</span>
+                    </button>
+                    <button class="pos-btn" onclick="showKeyboardShortcuts()" title="Keyboard Shortcuts">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                        </svg>
+                        <span class="kbd">?</span>
+                    </button>
+                    <a href="{{ route('admin.dashboard') }}" class="pos-btn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                        Dashboard
                     </a>
                     <div class="pos-time" id="clock">--:--</div>
                 </div>
@@ -1009,6 +1059,140 @@
                 this.classList.toggle('open');
             }
         });
+
+            // ========== ADVANCED POS FEATURES ==========
+
+            // Sound Effects
+            const sounds = {
+                add: new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2teleHlvfZy9x6dxJAo1kr/fvIFJGSh+1PbRjkEaKZnP8c+PN0o='),
+                checkout: new Audio('data:audio/wav;base64,UklGRjIBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ4BAAB+fn5+fn5+fn5/gH9/f4CAgICBgYGCgoKDg4OEhISFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKTk5OUlJSVlZWWlpaXl5eYmJiZmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWmpqanp6eoqKipqamqqqqrq6usrKytra2urq6vr6+wsLCxsbGysrKzs7O0tLS1tbW2tra3t7e4uLi5ubm6urq7u7u8vLy9vb2+vr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fIyMjJycnKysrLy8vMzMzNzc3Ozs7Pz8/Q0NDR0dHS0tLT09PU1NTV1dXW1tbX19fY2NjZ2dna2trb29vc3Nzd3d3e3t7f39/g4ODh4eHi4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u7u7v7+/w8PDx8fHy8vLz8/P09PT19fX29vb39/f4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7///8='),
+                error: new Audio('data:audio/wav;base64,UklGRjIBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ4BAAB/f39/f398fHt6eXl4eHd3dnZ1dXR0c3NycnFxcHBvb25ubW1sbGtramppamppaWhoZ2dmZmVlZGRjY2JiYWFgYF9fXl5dXVxcW1taWllZWFhXV1ZWVVVUVFNTUlJRUVBQT09OTk1NTExLS0pKSUlISEdHRkZFRURUQ0NCQkFBQEA/Pz4+PT08PDt7Ojo5OTg4Nzc2NjU1NTQ0MzMyMjExMDAvLy4uLS0sLCsrKiopKSgoJycmJiUlJCQjIyIiISEgIB8fHh4dHRwcGxsaGhkZGBgXFxYWFRUUFBMTEhIRERAQDw8ODg0NDAwLCwoKCQkICAgHBwYGBQUEBAMDAgIBAQAA'),
+            };
+
+            function playSound(type) {
+                try {
+                    sounds[type]?.play().catch(() => { });
+                } catch (e) { }
+            }
+
+            // Enhanced addToCart with sound
+            const originalAddToCart = addToCart;
+            addToCart = function (id, name, price) {
+                originalAddToCart(id, name, price);
+                playSound('add');
+            };
+
+            // Fullscreen Toggle
+            let isFullscreen = false;
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().then(() => {
+                        isFullscreen = true;
+                        document.getElementById('fullscreenIcon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>';
+                    });
+                } else {
+                    document.exitFullscreen().then(() => {
+                        isFullscreen = false;
+                        document.getElementById('fullscreenIcon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>';
+                    });
+                }
+            }
+
+            // Keyboard Shortcuts
+            document.addEventListener('keydown', function (e) {
+                // Skip if typing in input
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    if (e.key === 'Escape') e.target.blur();
+                    return;
+                }
+
+                switch (e.key.toLowerCase()) {
+                    case 'f11':
+                        e.preventDefault();
+                        toggleFullscreen();
+                        break;
+                    case '/':
+                    case 's':
+                        e.preventDefault();
+                        document.getElementById('searchInput').focus();
+                        break;
+                    case 'escape':
+                        e.preventDefault();
+                        closeModal();
+                        document.getElementById('searchInput').value = '';
+                        filterItems();
+                        break;
+                    case 'c':
+                        if (e.ctrlKey || e.metaKey) return;
+                        e.preventDefault();
+                        if (cart.length > 0) checkout('cash');
+                        break;
+                    case 'k':
+                        if (e.ctrlKey || e.metaKey) return;
+                        e.preventDefault();
+                        if (cart.length > 0) checkout('knet');
+                        break;
+                    case 'x':
+                        e.preventDefault();
+                        clearCart();
+                        break;
+                    case 'o':
+                        e.preventDefault();
+                        document.querySelector('.tabs button:last-child').click();
+                        break;
+                    case '?':
+                        e.preventDefault();
+                        showKeyboardShortcuts();
+                        break;
+                    case '1': case '2': case '3': case '4': case '5':
+                    case '6': case '7': case '8': case '9':
+                        // Quick category switch
+                        const catBtns = document.querySelectorAll('.cat-btn');
+                        const idx = parseInt(e.key) - 1;
+                        if (catBtns[idx]) {
+                            catBtns[idx].click();
+                        }
+                        break;
+                }
+            });
+
+            // Keyboard Shortcuts Modal
+            function showKeyboardShortcuts() {
+                const modal = document.createElement('div');
+                modal.id = 'shortcutsModal';
+                modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:9999;';
+                modal.innerHTML = `
+                <div style="background:var(--card);border-radius:16px;padding:24px;max-width:400px;width:90%;">
+                    <h3 style="font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+                        <svg style="width:20px;height:20px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                        Keyboard Shortcuts
+                    </h3>
+                    <div style="display:grid;gap:8px;font-size:13px;">
+                        <div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg);border-radius:8px;"><span>Search Items</span><kbd style="background:var(--card-hover);padding:2px 8px;border-radius:4px;font-weight:600;">S or /</kbd></div>
+                        <div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg);border-radius:8px;"><span>Fullscreen Toggle</span><kbd style="background:var(--card-hover);padding:2px 8px;border-radius:4px;font-weight:600;">F11</kbd></div>
+                        <div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg);border-radius:8px;"><span>Cash Checkout</span><kbd style="background:var(--card-hover);padding:2px 8px;border-radius:4px;font-weight:600;">C</kbd></div>
+                        <div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg);border-radius:8px;"><span>KNET Checkout</span><kbd style="background:var(--card-hover);padding:2px 8px;border-radius:4px;font-weight:600;">K</kbd></div>
+                        <div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg);border-radius:8px;"><span>Clear Cart</span><kbd style="background:var(--card-hover);padding:2px 8px;border-radius:4px;font-weight:600;">X</kbd></div>
+                        <div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg);border-radius:8px;"><span>View Orders</span><kbd style="background:var(--card-hover);padding:2px 8px;border-radius:4px;font-weight:600;">O</kbd></div>
+                        <div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg);border-radius:8px;"><span>Quick Category</span><kbd style="background:var(--card-hover);padding:2px 8px;border-radius:4px;font-weight:600;">1-9</kbd></div>
+                        <div style="display:flex;justify-content:space-between;padding:8px;background:var(--bg);border-radius:8px;"><span>Close/Cancel</span><kbd style="background:var(--card-hover);padding:2px 8px;border-radius:4px;font-weight:600;">ESC</kbd></div>
+                    </div>
+                    <button onclick="this.closest('#shortcutsModal').remove()" style="width:100%;margin-top:16px;padding:12px;background:var(--primary);color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;">Got it!</button>
+                </div>
+            `;
+                modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+                document.body.appendChild(modal);
+            }
+
+            // Focus search on load (productivity)
+            setTimeout(() => document.getElementById('searchInput').focus(), 500);
+
+            // Enhanced checkout with sound
+            const originalCheckout = checkout;
+            checkout = function (method) {
+                playSound('checkout');
+                originalCheckout(method);
+            };
     </script>
 </body>
 </html>

@@ -18,10 +18,14 @@ class WhatsAppFormatter
             $msg .= "👤 العميل: {$order->customer_name}\n";
             $msg .= "📞 الهاتف: {$order->customer_mobile}\n";
             $msg .= "🚚 النوع: " . ($order->delivery_type === 'delivery' ? 'توصيل' : 'استلام') . "\n";
+            $msg .= "💳 الدفع: " . ($order->payment_method === 'knet' ? 'كي-نت' : 'كاش') . "\n";
 
             if ($order->delivery_type === 'delivery' && $order->address) {
                 $addr = $order->address;
                 $msg .= "📍 العنوان: " . ($addr['area'] ?? '') . ", " . ($addr['block'] ?? '') . ", " . ($addr['house'] ?? '') . "\n";
+                if (!empty($addr['location_url'])) {
+                    $msg .= "🗺️ الموقع: " . $addr['location_url'] . "\n";
+                }
             }
 
             $msg .= "\n📝 *الأصناف:* \n";
@@ -41,10 +45,14 @@ class WhatsAppFormatter
             $msg .= "👤 Customer: {$order->customer_name}\n";
             $msg .= "📞 Mobile: {$order->customer_mobile}\n";
             $msg .= "🚚 Type: " . ucfirst($order->delivery_type) . "\n";
+            $msg .= "💳 Payment: " . ($order->payment_method === 'knet' ? 'KNET' : 'Cash') . "\n";
 
             if ($order->delivery_type === 'delivery' && $order->address) {
                 $addr = $order->address;
                 $msg .= "📍 Address: " . ($addr['area'] ?? '') . ", Block " . ($addr['block'] ?? '') . ", House " . ($addr['house'] ?? '') . "\n";
+                if (!empty($addr['location_url'])) {
+                    $msg .= "🗺️ Location: " . $addr['location_url'] . "\n";
+                }
             }
 
             $msg .= "\n📝 *Items:* \n";

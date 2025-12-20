@@ -135,6 +135,45 @@
                                 class="w-full bg-slate-50 border-none rounded-xl p-3 font-bold shadow-inner text-sm"
                                 placeholder="e.g. Near Sultan Center">
                         </div>
+                        <!-- Location Fetch Button -->
+                        <div class="pt-2">
+                            <input type="hidden" name="latitude" x-model="latitude">
+                            <input type="hidden" name="longitude" x-model="longitude">
+                            <input type="hidden" name="location_url" x-model="locationUrl">
+
+                            <button type="button" @click="fetchLocation()" :disabled="fetchingLocation"
+                                class="w-full flex items-center justify-center gap-3 p-4 rounded-2xl border-2 border-dashed transition-all"
+                                :class="locationUrl ? 'border-green-400 bg-green-50 text-green-700' : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-brand-400 hover:bg-brand-50'">
+                                <template x-if="fetchingLocation">
+                                    <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                        </path>
+                                    </svg>
+                                </template>
+                                <template x-if="!fetchingLocation && !locationUrl">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </template>
+                                <template x-if="!fetchingLocation && locationUrl">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </template>
+                                <span class="font-bold"
+                                    x-text="fetchingLocation ? 'Getting Location...' : (locationUrl ? 'Location Captured ✓' : 'Get My Exact Location')"></span>
+                            </button>
+                            <p class="text-[10px] text-slate-400 mt-2 text-center" x-show="!locationUrl">Share your GPS location for faster
+                                delivery</p>
+                            <p class="text-[10px] text-green-600 mt-2 text-center font-bold" x-show="locationUrl">📍 Location will be shared
+                                with your order</p>
+                            <p class="text-[10px] text-red-500 mt-2 text-center" x-show="locationError" x-text="locationError"></p>
+                        </div>
                         </div>
                         </div>
 
@@ -217,6 +256,13 @@
                 deliveryType: 'pickup',
                 paymentMethod: 'cash',
                 total: 0,
+                
+                // Location state
+                latitude: '',
+                longitude: '',
+                locationUrl: '',
+                fetchingLocation: false,
+                locationError: '',
 
                 init() {
                     const savedCart = localStorage.getItem('cart_{{ $tenant->slug }}');
@@ -230,6 +276,46 @@
 
                 calculateTotal() {
                     this.total = this.cart.reduce((sum, item) => sum + (parseFloat(item.price) * (item.qty || 1)), 0);
+                },
+
+                fetchLocation() {
+                    if (!navigator.geolocation) {
+                        this.locationError = 'Geolocation is not supported by your browser';
+                        return;
+                    }
+
+                    this.fetchingLocation = true;
+                    this.locationError = '';
+
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            this.latitude = position.coords.latitude;
+                            this.longitude = position.coords.longitude;
+                            this.locationUrl = `https://www.google.com/maps?q=${this.latitude},${this.longitude}`;
+                            this.fetchingLocation = false;
+                        },
+                        (error) => {
+                            this.fetchingLocation = false;
+                            switch(error.code) {
+                                case error.PERMISSION_DENIED:
+                                    this.locationError = 'Please allow location access to use this feature';
+                                    break;
+                                case error.POSITION_UNAVAILABLE:
+                                    this.locationError = 'Location information is unavailable';
+                                    break;
+                                case error.TIMEOUT:
+                                    this.locationError = 'Location request timed out. Please try again';
+                                    break;
+                                default:
+                                    this.locationError = 'An error occurred while fetching location';
+                            }
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 0
+                        }
+                    );
                 }
             }
         }

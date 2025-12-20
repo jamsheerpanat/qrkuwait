@@ -68,6 +68,9 @@ class CheckoutController extends Controller
                 'landmark' => $request->landmark,
                 'paci' => $request->paci,
                 'extra' => $request->extra,
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+                'location_url' => $request->location_url,
             ] : null,
             'subtotal' => $subtotal,
             'total' => $subtotal, // Delivery fee logic later

@@ -158,6 +158,13 @@
                                     class="font-bold text-gray-700 bg-gray-100 inline-block px-3 py-1 rounded-full text-xs uppercase">
                                     {{ $order->delivery_type }}</div>
                             </div>
+                            <div>
+                                <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Payment</div>
+                                <div
+                                    class="font-bold inline-block px-3 py-1 rounded-full text-xs uppercase {{ $order->payment_method === 'knet' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700' }}">
+                                    {{ strtoupper($order->payment_method ?? 'cash') }}
+                                </div>
+                            </div>
                             @if($order->address && is_array($order->address))
                                 <div>
                                     <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Address</div>
@@ -169,6 +176,20 @@
                                         @endif
                                     </div>
                                 </div>
+                                @if(!empty($order->address['location_url']))
+                                    <div>
+                                        <a href="{{ $order->address['location_url'] }}" target="_blank"
+                                            class="inline-flex items-center gap-2 px-4 py-3 bg-blue-50 text-blue-700 rounded-xl font-bold hover:bg-blue-100 transition text-sm">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z">
+                                                </path>
+                                            </svg>
+                                            Open in Google Maps
+                                        </a>
+                                    </div>
+                                @endif
                             @endif
                         </div>
                     </div>

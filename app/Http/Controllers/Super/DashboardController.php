@@ -63,12 +63,12 @@ class DashboardController extends Controller
             ];
         }
 
-        // Top Performing Tenants (by revenue)
-        $topTenants = Tenant::select('tenants.*')
+        // Top Performing Tenants (by revenue) - MySQL strict mode compatible
+        $topTenants = Tenant::select('tenants.id', 'tenants.name', 'tenants.slug', 'tenants.type', 'tenants.status')
             ->selectRaw('COALESCE(SUM(orders.total), 0) as total_revenue')
             ->selectRaw('COUNT(orders.id) as order_count')
             ->leftJoin('orders', 'tenants.id', '=', 'orders.tenant_id')
-            ->groupBy('tenants.id')
+            ->groupBy('tenants.id', 'tenants.name', 'tenants.slug', 'tenants.type', 'tenants.status')
             ->orderByDesc('total_revenue')
             ->limit(5)
             ->get();

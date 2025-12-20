@@ -58,9 +58,14 @@
     <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
         <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold text-xs">
-                    {{ substr($currentTenant->name ?? 'Q', 0, 1) }}
-                </div>
+                @if($currentTenant->logo_url)
+                    <img src="{{ $currentTenant->logo_url }}" alt="{{ $currentTenant->name }}"
+                        class="w-10 h-10 rounded-lg object-contain border border-slate-100">
+                @else
+                    <div class="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white font-bold text-xs">
+                        {{ substr($currentTenant->name ?? 'Q', 0, 1) }}
+                    </div>
+                @endif
                 <h1 class="font-bold text-sm tracking-tight text-slate-900 uppercase">{{ $currentTenant->name ?? 'Store' }}</h1>
                 </div>
             <div class="flex items-center gap-4">

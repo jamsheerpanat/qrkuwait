@@ -18,22 +18,29 @@
                                 <h3 class="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Branding</h3>
                                 <div class="space-y-6">
                                     <div>
+                                        <x-input-label for="name" :value="__('Store Name')" />
+                                        <x-text-input name="name" type="text" class="mt-1 block w-full"
+                                            :value="$tenant->name" required />
+                                    </div>
+                                    <div>
                                         <x-input-label for="logo" :value="__('Store Logo')" />
-                                        @if(isset($settings['logo']))
-                                            <img src="{{ asset('storage/' . $settings['logo']) }}"
+                                        @if($tenant->logo_url)
+                                            <img src="{{ $tenant->logo_url }}"
                                                 class="w-24 h-24 rounded-xl object-cover mb-4 border shadow-sm">
                                         @endif
                                         <input type="file" name="logo"
                                             class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
-                                    </div>
-                                    <div>
-                                        <x-input-label for="cover" :value="__('Cover Banner')" />
-                                        @if(isset($settings['cover']))
-                                            <img src="{{ asset('storage/' . $settings['cover']) }}"
-                                                class="w-full h-32 rounded-xl object-cover mb-4 border shadow-sm">
-                                        @endif
+                                        <p class="text-xs text-gray-400 mt-1">Recommended: 512x512px, max 1MB</p>
+                                        </div>
+                                        <div>
+                                            <x-input-label for="cover" :value="__('Cover Banner')" />
+                                            @if($tenant->cover_url)
+                                                <img src="{{ $tenant->cover_url }}"
+                                                    class="w-full h-32 rounded-xl object-cover mb-4 border shadow-sm">
+                                            @endif
                                         <input type="file" name="cover"
                                             class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" />
+                                        <p class="text-xs text-gray-400 mt-1">Recommended: 1920x400px, max 2MB</p>
                                     </div>
                                 </div>
                             </div>
@@ -47,14 +54,14 @@
                                     <div>
                                         <x-input-label for="currency" :value="__('Store Currency')" />
                                         <x-text-input name="currency" type="text" class="mt-1 block w-full"
-                                            :value="$settings['currency'] ?? 'KWD'" />
+                                            :value="$tenant->currency ?? 'KWD'" />
                                     </div>
                                     <div>
                                         <x-input-label for="timezone" :value="__('Timezone')" />
                                         <select name="timezone"
                                             class="w-full rounded-xl border-gray-300 shadow-sm focus:ring-indigo-500">
-                                            <option value="Asia/Kuwait" {{ ($settings['timezone'] ?? '') == 'Asia/Kuwait' ? 'selected' : '' }}>Asia/Kuwait</option>
-                                            <option value="UTC" {{ ($settings['timezone'] ?? '') == 'UTC' ? 'selected' : '' }}>UTC</option>
+                                            <option value="Asia/Kuwait" {{ ($tenant->timezone ?? '') == 'Asia/Kuwait' ? 'selected' : '' }}>Asia/Kuwait</option>
+                                            <option value="UTC" {{ ($tenant->timezone ?? '') == 'UTC' ? 'selected' : '' }}>UTC</option>
                                         </select>
                                     </div>
                                     <div>
@@ -73,15 +80,15 @@
                         <h3 class="text-xl font-black italic">Operational Features</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             @php
-                                $features = [
-                                    'enable_kds' => 'Kitchen Display (KDS)',
-                                    'enable_packing' => 'Grocery Packing Screen',
-                                    'enable_delivery' => 'Delivery Support',
-                                    'enable_pickup' => 'Pickup Support',
-                                    'enable_variants' => 'Item Variants',
-                                    'enable_modifiers' => 'Item Modifiers',
-                                    'enable_whatsapp_notify' => 'WhatsApp Order Received Msg',
-                                ];
+$features = [
+    'enable_kds' => 'Kitchen Display (KDS)',
+    'enable_packing' => 'Grocery Packing Screen',
+    'enable_delivery' => 'Delivery Support',
+    'enable_pickup' => 'Pickup Support',
+    'enable_variants' => 'Item Variants',
+    'enable_modifiers' => 'Item Modifiers',
+    'enable_whatsapp_notify' => 'WhatsApp Order Received Msg',
+];
                             @endphp
                             @foreach($features as $key => $label)
                                 <label

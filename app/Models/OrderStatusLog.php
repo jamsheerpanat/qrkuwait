@@ -11,11 +11,18 @@ class OrderStatusLog extends Model
 
     public $timestamps = false;
 
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = null;
+
     protected $fillable = [
         'order_id',
         'from_status',
         'to_status',
         'changed_by_user_id',
+    ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
     ];
 
     public function order()

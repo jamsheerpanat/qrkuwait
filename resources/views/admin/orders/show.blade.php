@@ -158,12 +158,11 @@
                                     class="font-bold text-gray-700 bg-gray-100 inline-block px-3 py-1 rounded-full text-xs uppercase">
                                     {{ $order->delivery_type }}</div>
                             </div>
-                            @if($order->address)
+                            @if($order->address && is_array($order->address))
                                 <div>
                                     <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Address</div>
                                     <div class="text-sm font-bold text-gray-700 leading-relaxed italic">
-                                        {{ $order->address['area'] }}, Block {{ $order->address['block'] }}, Street
-                                        {{ $order->address['street'] }}, House {{ $order->address['house'] }}
+                                        {{ $order->address['area'] ?? '' }}{{ !empty($order->address['block']) ? ', Block ' . $order->address['block'] : '' }}{{ !empty($order->address['street']) ? ', Street ' . $order->address['street'] : '' }}{{ !empty($order->address['house']) ? ', House ' . $order->address['house'] : '' }}
                                         @if(!empty($order->address['extra']))
                                             <br><span class="text-gray-400 font-normal">Note:
                                                 {{ $order->address['extra'] }}</span>

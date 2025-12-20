@@ -40,4 +40,14 @@ class ItemModifier extends Model
         $locale = app()->getLocale();
         return $this->name[$locale] ?? ($this->name['en'] ?? '');
     }
+
+    // Safe price accessor - returns 0 if column doesn't exist
+    public function getSafePriceAttribute()
+    {
+        try {
+            return $this->attributes['price'] ?? 0;
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
 }

@@ -227,11 +227,11 @@
             function variantsManager() {
                 return {
                     variants: @json($item->variants->map(fn($v) => [
-            'id' => $v->id,
-            'name_en' => $v->name['en'] ?? '',
-            'name_ar' => $v->name['ar'] ?? '',
-            'price' => $v->price_diff,
-        ])),
+                        'id' => $v->id,
+                        'name_en' => $v->name['en'] ?? '',
+                        'name_ar' => $v->name['ar'] ?? '',
+                        'price' => $v->price_diff,
+                    ])),
                     saving: false,
 
                     addVariant() {
@@ -280,11 +280,11 @@
             function addonsManager() {
                 return {
                     addons: @json($item->modifiers->map(fn($m) => [
-            'id' => $m->id,
-            'name_en' => $m->name['en'] ?? '',
-            'name_ar' => $m->name['ar'] ?? '',
-            'price' => $m->price ?? 0,
-        ])),
+                        'id' => $m->id,
+                        'name_en' => $m->name['en'] ?? '',
+                        'name_ar' => $m->name['ar'] ?? '',
+                        'price' => $m->safe_price,
+                    ])),
                     saving: false,
 
                     addAddon() {

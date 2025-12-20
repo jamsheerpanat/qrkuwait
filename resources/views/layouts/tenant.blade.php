@@ -85,6 +85,21 @@
         @yield('content')
     </main>
 
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white py-8 pb-24 sm:pb-8">
+        <div class="max-w-5xl mx-auto px-6 text-center">
+            <div class="flex justify-center mb-4">
+                <img src="{{ asset('images/qrkuwait-logo.png') }}" alt="QRKuwait"
+                    class="h-10 brightness-0 invert opacity-80">
+            </div>
+            <p class="text-xs text-slate-400 mb-2">Digital Ordering Solutions</p>
+            <p class="text-[10px] text-slate-500">
+                Powered by <a href="https://octonics.io" target="_blank" class="text-cyan-400 hover:text-cyan-300">Octonics
+                    Innovations</a>
+            </p>
+        </div>
+    </footer>
+
     <!-- Minimal Bottom Nav -->
     <nav
         class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-100 safe-area-bottom sm:hidden z-50">

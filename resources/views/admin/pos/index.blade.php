@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>POS - {{ $tenant->name }}</title>
+    <title>POS - {{ $tenant->name }} | QRKuwait</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/qrkuwait-logo.png') }}">
     
     <!-- Minimal CSS - Inlined for fastest load -->
     <style>
@@ -21,6 +24,7 @@
             --text: #f8fafc;
             --text-muted: #94a3b8;
             --border: #334155;
+            --cyan: #22d3ee;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -55,14 +59,38 @@
             border-bottom: 1px solid var(--border);
         }
         .pos-logo {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .pos-logo img {
+            height: 32px;
+        }
+        .pos-logo .store-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
         }
         .pos-time {
             font-size: 14px;
             color: var(--text-muted);
             font-weight: 600;
+        }
+        .pos-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--card-hover);
+            border-radius: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .pos-back:hover {
+            background: var(--primary);
+            color: white;
         }
         
         /* Search Bar */
@@ -151,7 +179,7 @@
         .item-price {
             font-size: 16px;
             font-weight: 800;
-            color: var(--primary);
+            color: var(--cyan);
         }
         .item-sku {
             font-size: 10px;
@@ -245,7 +273,7 @@
         }
         .cart-item-price {
             font-size: 12px;
-            color: var(--primary);
+            color: var(--cyan);
             font-weight: 700;
         }
         .qty-controls {
@@ -308,7 +336,7 @@
         .order-total {
             font-size: 16px;
             font-weight: 800;
-            color: var(--primary);
+            color: var(--cyan);
         }
         .order-actions {
             display: flex;
@@ -344,7 +372,7 @@
         .summary-row.total {
             font-size: 20px;
             font-weight: 800;
-            color: var(--primary);
+            color: var(--cyan);
             margin-top: 12px;
             padding-top: 12px;
             border-top: 1px solid var(--border);
@@ -373,6 +401,20 @@
         .pay-btn.cash { background: var(--success); color: white; }
         .pay-btn.card { background: var(--primary); color: white; }
         .pay-btn:hover:not(:disabled) { transform: scale(1.02); }
+        
+        /* Footer */
+        .pos-footer {
+            padding: 8px 16px;
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        .pos-footer a {
+            color: var(--cyan);
+            text-decoration: none;
+        }
         
         /* Empty State */
         .empty-state {
@@ -508,8 +550,16 @@
         <!-- Left Panel - Menu -->
         <div class="menu-panel">
             <div class="pos-header">
-                <div class="pos-logo">⚡ {{ $tenant->name }}</div>
-                <div class="pos-time" id="clock">--:--</div>
+                <div class="pos-logo">
+                    <img src="{{ asset('images/qrkuwait-logo.png') }}" alt="QRKuwait">
+                    <span class="store-name">{{ $tenant->name }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <a href="{{ route('admin.dashboard') }}" class="pos-back">
+                        ← Dashboard
+                    </a>
+                    <div class="pos-time" id="clock">--:--</div>
+                </div>
             </div>
             
             <div class="search-bar">
@@ -599,6 +649,10 @@
                         💳 KNET
                     </button>
                 </div>
+            </div>
+            <!-- Footer Credit -->
+            <div class="pos-footer">
+                Powered by <a href="https://octonics.io" target="_blank">Octonics Innovations</a>
             </div>
         </div>
     </div>

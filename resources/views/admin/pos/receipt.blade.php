@@ -229,7 +229,7 @@
                 <tr>
                     <td>
                         <div class="item-name">{{ $item->item_name }}</div>
-                        <div class="item-qty">{{ (float)$item->qty }} × {{ number_format($item->price, 3) }}</div>
+                        <div class="item-qty">{{ (float) $item->qty }} × {{ number_format($item->price, 3) }}</div>
                     </td>
                     <td>{{ number_format($item->line_total, 3) }}</td>
                 </tr>
@@ -274,7 +274,8 @@
     <div class="footer">
         <p class="thank-you">Thank you!</p>
         <p>{{ $tenant->name }}</p>
-        <p style="font-size: 9px; color: #888;">Powered by QRKuwait</p>
+        <p style="font-size: 9px; color: #888; margin-top: 8px;">Powered by QRKuwait</p>
+        <p style="font-size: 8px; color: #aaa;">octonics.io</p>
     </div>
     
     <script>

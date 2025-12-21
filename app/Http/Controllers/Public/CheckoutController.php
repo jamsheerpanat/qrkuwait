@@ -25,29 +25,32 @@ class CheckoutController extends Controller
         // Check if this is a table order (dine-in)
         $isTableOrder = $request->delivery_type === 'dine_in' || $request->filled('table_number');
 
-        // Different validation for table orders vs regular orders
-        if ($isTableOrder) {
-            $rules = [
-                'customer_name' => 'nullable|string|max:255',
-                'customer_mobile' => ['nullable', 'string', 'regex:/^(\+?965)?[0-9]{8}$/'],
-                'table_number' => 'required|string|max:10',
-                'payment_method' => 'required|in:pay_later,knet,cash',
-                'cart_data' => 'required|json',
-            ];
-        } else {
-            $rules = [
-                'customer_name' => 'required|string|max:255',
-                'customer_mobile' => ['required', 'string', 'regex:/^(\+?965)?[0-9]{8}$/'],
-                'delivery_type' => 'required|in:pickup,delivery',
-                'area' => 'required_if:delivery_type,delivery|nullable|string|max:255',
-                'block' => 'required_if:delivery_type,delivery|nullable|string|max:255',
-                'house' => 'required_if:delivery_type,delivery|nullable|string|max:255',
-                'payment_method' => 'required|in:cash,knet',
-                'cart_data' => 'required|json',
-            ];
-        }
+        $rules = $isTableOrder ? [
+            'customer_name' => 'nullable|string|max:255',
+            'customer_mobile' => ['nullable', 'string', 'regex:/^(\+?965)?[0-9]{8}$/'],
+            'table_number' => 'required|string|max:10',
+            'payment_method' => 'required|in:pay_later,knet,cash',
+            'cart_data' => 'required|json',
+        ] : [
+            'customer_name' => 'required|string|max:255',
+            'customer_mobile' => ['required', 'string', 'regex:/^(\+?965)?[0-9]{8}$/'],
+            'delivery_type' => 'required|in:pickup,delivery',
+            'area' => 'required_if:delivery_type,delivery|nullable|string|max:255',
+            'block' => 'required_if:delivery_type,delivery|nullable|string|max:255',
+            'house' => 'required_if:delivery_type,delivery|nullable|string|max:255',
+            'payment_method' => 'required|in:cash,knet',
+            'cart_data' => 'required|json',
+        ];
 
-        $request->validate($rules);
+        $messages = [
+            'customer_mobile.regex' => 'Please enter a valid 8-digit Kuwait mobile number.',
+            'customer_mobile.required' => 'Mobile number is required to contact you.',
+            'area.required_if' => 'Area is required for delivery.',
+            'block.required_if' => 'Block is required for delivery.',
+            'house.required_if' => 'House/Flat number is required for delivery.',
+        ];
+
+        $request->validate($rules, $messages);
 
         $cart = json_decode($request->cart_data, true);
         if (empty($cart)) {

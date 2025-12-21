@@ -62,9 +62,16 @@
                 <div class="flex gap-2 flex-wrap">
                     <template x-for="t in 20" :key="t">
                         <button @click="selectTable(t)"
-                            class="w-12 h-12 rounded-xl font-bold text-sm transition-all flex items-center justify-center"
-                            :class="selectedTable === t ? 'bg-amber-500 text-white scale-110 shadow-lg' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'"
-                            x-text="t">
+                            class="w-16 h-16 rounded-2xl font-black text-sm transition-all flex flex-col items-center justify-center gap-1 shadow-sm relative overflow-hidden"
+                            :class="selectedTable === t 
+                                ? 'bg-indigo-600 text-white shadow-indigo-200' 
+                                : (isTableActive(t) 
+                                    ? 'bg-amber-50 text-amber-700 border-2 border-amber-200 shadow-amber-50' 
+                                    : 'bg-white text-slate-400 border border-slate-200 hover:border-indigo-400 hover:bg-slate-50')">
+                            <span x-text="t"></span>
+                            <template x-if="isTableActive(t)">
+                                <span class="text-[8px] uppercase tracking-tighter opacity-70">Serving</span>
+                            </template>
                         </button>
                     </template>
                 </div>
@@ -128,31 +135,71 @@
             </div>
 
             <!-- Cart Items -->
-            <div class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-3">
-                <template x-if="cart.length === 0">
-                    <div class="flex flex-col items-center justify-center h-full text-slate-500">
-                        <svg class="w-16 h-16 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                        </svg>
-                        <p class="font-bold">No items yet</p>
-                        <p class="text-xs mt-1">Tap items to add</p>
+            <div class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-6">
+                <!-- Existing Items -->
+                <template x-if="existingItems.length > 0">
+                    <div>
+                        <div
+                            class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 mb-3 px-2">
+                            <span>Serving Now</span>
+                            <div class="h-px flex-1 bg-slate-700/50"></div>
+                        </div>
+                        <div class="space-y-2">
+                            <template x-for="item in existingItems" :key="item.id">
+                                <div
+                                    class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-3 flex items-center gap-3 opacity-60">
+                                    <div class="flex-1">
+                                        <div class="font-bold text-sm" x-text="item.item_name"></div>
+                                        <div class="text-[10px] text-slate-500"
+                                            x-text="parseFloat(item.price).toFixed(3) + ' x ' + parseInt(item.qty)"></div>
+                                    </div>
+                                    <div class="text-xs font-bold text-indigo-400" x-text="parseFloat(item.line_total).toFixed(3)">
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
                     </div>
                 </template>
+            
+                <!-- New Items -->
+                <div>
+                    <template x-if="cart.length === 0">
+                        <div class="flex flex-col items-center justify-center py-10 text-slate-500">
+                            <svg class="w-12 h-12 mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
+                            <p class="font-bold text-xs uppercase tracking-widest opacity-50">Add items to order</p>
+                            </div>
+                            </template>
 
-                <template x-for="(item, index) in cart" :key="index">
-                    <div class="bg-slate-700 rounded-xl p-3 flex items-center gap-3">
-                        <div class="flex-1">
-                            <div class="font-bold text-sm" x-text="item.name"></div>
-                            <div class="text-xs text-indigo-400" x-text="(item.price * item.qty).toFixed(3) + ' KWD'"></div>
-                        </div>
-                        <div class="flex items-center gap-2 bg-slate-800 rounded-lg px-2 py-1">
-                            <button @click="updateQty(index, -1)" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-white font-bold">−</button>
-                            <span class="w-6 text-center font-bold" x-text="item.qty"></span>
-                            <button @click="updateQty(index, 1)" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-white font-bold">+</button>
-                        </div>
-                    </div>
-                </template>
-            </div>
+                    <template x-if="cart.length > 0">
+                        <div>
+                            <div class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-indigo-400 mb-3 px-2">
+                                <span>New Items</span>
+                                <div class="h-px flex-1 bg-indigo-500/20"></div>
+                            </div>
+                            <div class="space-y-3">
+                                <template x-for="(item, index) in cart" :key="index">
+                                    <div class="bg-indigo-600/10 border border-indigo-500/20 rounded-xl p-3 flex items-center gap-3">
+                                        <div class="flex-1">
+                                            <div class="font-bold text-sm" x-text="item.name"></div>
+                                            <div class="text-xs text-indigo-400" x-text="(item.price * item.qty).toFixed(3) + ' KWD'"></div>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-indigo-600/20 rounded-lg px-2 py-1">
+                                            <button @click="updateQty(index, -1)"
+                                                class="w-7 h-7 flex items-center justify-center text-indigo-300 hover:text-white font-bold">−</button>
+                                            <span class="w-6 text-center font-bold text-indigo-400" x-text="item.qty"></span>
+                                            <button @click="updateQty(index, 1)"
+                                                class="w-7 h-7 flex items-center justify-center text-indigo-300 hover:text-white font-bold">+</button>
+                                        </div>
+                                        </div>
+                                        </template>
+                                        </div>
+                            </div>
+                            </template>
+                            </div>
+                            </div>
 
             <!-- Notes -->
             <div class="p-4 border-t border-slate-700">
@@ -163,24 +210,36 @@
             <!-- Cart Footer -->
             <div class="p-4 bg-slate-900 border-t border-slate-700">
                 <div class="flex justify-between items-center mb-4">
-                    <span class="text-slate-400 text-sm font-bold uppercase">Total</span>
-                    <span class="text-2xl font-black" x-text="cartTotal.toFixed(3) + ' KWD'"></span>
+                    <span class="text-slate-400 text-sm font-bold uppercase" x-text="cart.length > 0 ? 'New Total' : 'Order Total'"></span>
+                    <span class="text-2xl font-black"
+                        x-text="(cartTotal + (existingItems.reduce((sum, i) => sum + parseFloat(i.line_total), 0))).toFixed(3) + ' KWD'"></span>
                 </div>
-                <button @click="sendOrder()"
-                    :disabled="cart.length === 0 || !selectedTable || sending"
-                    class="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-700 disabled:text-slate-500 text-white font-bold py-4 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-3">
-                    <template x-if="!sending">
-                        <span class="flex items-center gap-3">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                            </svg>
-                            Send to Kitchen
-                        </span>
-                    </template>
-                    <template x-if="sending">
-                        <span>Sending...</span>
-                    </template>
-                </button>
+                <div class="space-y-3">
+                    <button @click="sendOrder()"
+                        x-show="cart.length > 0"
+                        :disabled="!selectedTable || sending"
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-700 disabled:text-slate-500 text-white font-black py-4 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-3">
+                        <template x-if="!sending">
+                            <span class="flex items-center gap-3">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                                Send to Kitchen
+                            </span>
+                        </template>
+                        <template x-if="sending">
+                            <span>Sending...</span>
+                        </template>
+                    </button>
+<button @click="checkoutTable()" x-show="cart.length === 0 && activeOrderNo"
+    class="w-full bg-amber-500 hover:bg-amber-600 text-white font-black py-4 rounded-xl transition-all active:scale-95 flex items-center justify-center gap-3">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    Checkout & Print Bill
+</button>
+</div>
             </div>
         </div>
     </main>
@@ -198,10 +257,13 @@
                 selectedTable: null,
                 selectedCategory: 'all',
                 cart: [],
+                existingItems: [],
+                activeOrders: @json($activeOrders),
                 orderNotes: '',
                 sending: false,
                 currentTime: '',
                 toast: { show: false, message: '', type: 'success' },
+                activeOrderNo: null,
 
                 init() {
                     this.updateTime();
@@ -212,8 +274,31 @@
                     this.currentTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
                 },
 
-                selectTable(t) {
+                isTableActive(t) {
+                    return this.activeOrders.some(o => o.table_number == t);
+                },
+
+                async selectTable(t) {
                     this.selectedTable = t;
+                    this.cart = [];
+                    this.existingItems = [];
+                    this.activeOrderNo = null;
+
+                    const active = this.activeOrders.find(o => o.table_number == t);
+                    if (active) {
+                        this.activeOrderNo = active.order_no;
+                        // Fetch existing items for this table
+                        try {
+                            const response = await fetch(`{{ route('admin.waiter.table', '') }}/${t}`);
+                            const orders = await response.json();
+                            if (orders.length > 0) {
+                                // Merge all items from active orders for this table
+                                this.existingItems = orders.flatMap(o => o.items);
+                            }
+                        } catch (e) {
+                            console.error('Error fetching table items', e);
+                        }
+                    }
                 },
 
                 addToCart(id, name, price) {
@@ -271,7 +356,8 @@
                         if (data.success) {
                             this.showToast(data.message, 'success');
                             this.clearCart();
-                            // Keep same table selected for easy re-order
+                            // Refresh page or at least refresh tables to show serving state
+                            window.location.reload(); 
                         } else {
                             this.showToast('Failed to send order', 'error');
                         }
@@ -281,6 +367,30 @@
                     }
                     
                     this.sending = false;
+                },
+
+                async checkoutTable() {
+                    if (!this.activeOrderNo) return;
+                    if (!confirm('Are you sure you want to checkout Table ' + this.selectedTable + '?')) return;
+
+                    try {
+                        const response = await fetch(`{{ route('admin.waiter.checkout', '') }}/${this.activeOrderNo}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            this.showToast(data.message, 'success');
+                            // Open print view in new tab
+                            window.open(`{{ route('admin.orders.index') }}/${data.order_id}/print`, '_blank');
+                            window.location.reload();
+                        }
+                    } catch (e) {
+                        this.showToast('Error during checkout', 'error');
+                    }
                 },
 
                 showToast(message, type = 'success') {

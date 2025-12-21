@@ -14,10 +14,16 @@ class WaiterController extends Controller
     public function index(Request $request)
     {
         $tenant = $request->attributes->get('tenant');
-        $categories = Category::where('tenant_id', $tenant->id)->with('items')->get();
+        $categories = Category::where('tenant_id', $tenant->id)->orderBy('sort_order')->with('items')->get();
         $items = Item::where('tenant_id', $tenant->id)->where('is_active', true)->get();
-        
-        return view('admin.waiter.index', compact('tenant', 'categories', 'items'));
+
+        // Get active orders to show busy tables
+        $activeOrders = Order::where('tenant_id', $tenant->id)
+            ->whereIn('status', ['new', 'confirmed', 'preparing', 'ready'])
+            ->where('delivery_type', 'dine_in')
+            ->get(['table_number', 'status', 'total', 'order_no']);
+
+        return view('admin.waiter.index', compact('tenant', 'categories', 'items', 'activeOrders'));
     }
 
     public function createOrder(Request $request)
@@ -63,12 +69,10 @@ class WaiterController extends Controller
             'total' => $subtotal,
             'payment_method' => 'pay_later',
             'payment_status' => 'pending',
-            'source' => 'waiter', // Mark as waiter order
+            'status' => 'confirmed',
+            'source' => 'waiter',
             'notes' => $request->notes,
         ], $items, $tenant->id);
-
-        // Waiter orders go directly to 'confirmed' status (skip cashier approval)
-        $orderService->updateStatus($order, 'confirmed');
 
         return response()->json([
             'success' => true,
@@ -94,5 +98,21 @@ class WaiterController extends Controller
             ->get();
 
         return response()->json($orders);
+    }
+
+    public function checkout(Request $request, $orderNo)
+    {
+        $tenant = $request->attributes->get('tenant');
+        $order = Order::where('tenant_id', $tenant->id)
+            ->where('order_no', $orderNo)
+            ->firstOrFail();
+
+        $orderService = app(OrderService::class);
+        $orderService->updateStatus($order, 'completed', auth()->id());
+
+        // Also mark as paid for dine-in checkout
+        $order->update(['payment_status' => 'paid']);
+
+        return response()->json(['success' => true, 'message' => 'Table checked out successfully!', 'order_id' => $order->id]);
     }
 }

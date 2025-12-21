@@ -25,6 +25,16 @@ class User extends Authenticatable
         'role',
     ];
 
+    public function isWaiter()
+    {
+        return $this->role === 'waiter' || $this->role === 'tenant_admin';
+    }
+
+    public function isKitchen()
+    {
+        return $this->role === 'kitchen' || $this->role === 'tenant_admin';
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -58,18 +68,8 @@ class User extends Authenticatable
         return $this->role === 'super_admin';
     }
 
-    public function isTenantAdmin()
-    {
-        return $this->role === 'tenant_admin';
-    }
-
     public function isCashier()
     {
         return $this->role === 'cashier';
-    }
-
-    public function isKitchen()
-    {
-        return $this->role === 'kitchen';
     }
 }

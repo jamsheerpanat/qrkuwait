@@ -84,6 +84,7 @@ Route::middleware(['auth', 'tenant'])->prefix('admin')->name('admin.')->group(fu
     Route::get('/waiter', [\App\Http\Controllers\Admin\WaiterController::class, 'index'])->name('waiter.index');
     Route::post('/waiter/order', [\App\Http\Controllers\Admin\WaiterController::class, 'createOrder'])->name('waiter.order');
     Route::get('/waiter/table/{table}', [\App\Http\Controllers\Admin\WaiterController::class, 'tableOrders'])->name('waiter.table');
+    Route::post('/waiter/checkout/{orderNo}', [\App\Http\Controllers\Admin\WaiterController::class, 'checkout'])->name('waiter.checkout');
 
 });
 

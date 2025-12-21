@@ -96,6 +96,8 @@ class CheckoutController extends Controller
             'subtotal' => $subtotal,
             'total' => $subtotal, // Delivery fee logic later
             'payment_method' => $request->payment_method,
+            'status' => $isTableOrder ? 'new' : 'new', // Both start as new, but logic can diverge
+            'source' => $isTableOrder ? 'customer' : 'qr',
             'notes' => $request->notes,
         ], $items, $tenant->id);
 

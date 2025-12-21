@@ -14,9 +14,9 @@
         
         body {
             font-family: 'Courier New', monospace;
-            font-size: 12px;
+            font-size: 13px;
             width: 80mm;
-            padding: 8mm;
+            padding: 2mm;
             background: white;
             color: #000;
         }

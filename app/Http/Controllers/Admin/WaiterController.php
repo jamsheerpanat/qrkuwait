@@ -29,14 +29,21 @@ class WaiterController extends Controller
             ->orderBy('sort_order')
             ->get();
 
-        // Get active orders to show busy tables
-        $activeOrders = Order::where('tenant_id', $tenant->id)
-            ->whereIn('status', ['new', 'confirmed', 'preparing', 'ready'])
-            ->where(function ($q) {
+        // Get active orders to show busy tables - more defensive query
+        $activeOrdersQuery = Order::where('tenant_id', $tenant->id)
+            ->whereIn('status', ['new', 'confirmed', 'preparing', 'ready']);
+
+        // Check if table_number column exists to avoid 500 if migration skipped
+        if (\Illuminate\Support\Facades\Schema::hasColumn('orders', 'table_number')) {
+            $activeOrdersQuery->where(function ($q) {
                 $q->where('delivery_type', 'dine_in')
                     ->orWhereNotNull('table_number');
-            })
-            ->get(['id', 'table_number', 'status', 'total', 'order_no']);
+            });
+            $activeOrders = $activeOrdersQuery->get(['id', 'table_number', 'status', 'total', 'order_no']);
+        } else {
+            // Fallback for missing column
+            $activeOrders = $activeOrdersQuery->get(['id', 'status', 'total', 'order_no']);
+        }
 
         return view('admin.waiter.index', compact('tenant', 'categories', 'items', 'activeOrders'));
     }
@@ -64,7 +71,7 @@ class WaiterController extends Controller
             $itemModel = Item::find($item['id']);
             $items[] = [
                 'item_id' => $item['id'],
-                'item_name' => $itemModel ? ($itemModel->name['en'] ?? 'Item') : 'Item #' . $item['id'],
+                'item_name' => $itemModel ? $itemModel->getLocalizedName() : 'Item #' . $item['id'],
                 'qty' => $item['qty'],
                 'price' => $item['price'],
                 'line_total' => $line_total,

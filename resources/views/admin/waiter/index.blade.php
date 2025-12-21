@@ -90,7 +90,7 @@
                         <button @click="selectedCategory = {{ $cat->id }}"
                             class="w-full p-4 text-left text-xs font-bold uppercase tracking-wider transition-all"
                             :class="selectedCategory === {{ $cat->id }} ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:bg-slate-700'">
-                            {{ $cat->name['en'] ?? '' }}
+                            {{ $cat->getLocalizedName() }}
                         </button>
                     @endforeach
                 </div>
@@ -101,10 +101,10 @@
                         @foreach($items as $item)
                             <button 
                                 x-show="selectedCategory === 'all' || selectedCategory === {{ $item->category_id }}"
-                                @click="addToCart({{ $item->id }}, '{{ addslashes($item->name['en'] ?? $item->name['ar'] ?? 'Item') }}', {{ $item->price }})"
+                                @click="addToCart({{ $item->id }}, '{{ addslashes($item->getLocalizedName()) }}', {{ $item->price }})"
                                 class="bg-slate-700 hover:bg-slate-600 rounded-xl p-4 text-left transition-all active:scale-95"
                                 :class="selectedTable ? '' : 'opacity-50 pointer-events-none'">
-                                <div class="font-bold text-sm truncate">{{ $item->name['en'] ?? $item->name['ar'] ?? 'Item' }}</div>
+                                <div class="font-bold text-sm truncate">{{ $item->getLocalizedName() }}</div>
                                 <div class="text-indigo-400 font-bold text-xs mt-1">{{ number_format($item->price, 3) }} KWD</div>
                             </button>
                         @endforeach

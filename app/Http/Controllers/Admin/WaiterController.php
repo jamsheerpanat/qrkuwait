@@ -14,14 +14,29 @@ class WaiterController extends Controller
     public function index(Request $request)
     {
         $tenant = $request->attributes->get('tenant');
-        $categories = Category::where('tenant_id', $tenant->id)->orderBy('sort_order')->with('items')->get();
-        $items = Item::where('tenant_id', $tenant->id)->where('is_active', true)->get();
+
+        if (!$tenant) {
+            return redirect()->route('dashboard')->with('error', 'Tenant context not found.');
+        }
+
+        $categories = Category::where('tenant_id', $tenant->id)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+
+        $items = Item::where('tenant_id', $tenant->id)
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
 
         // Get active orders to show busy tables
         $activeOrders = Order::where('tenant_id', $tenant->id)
             ->whereIn('status', ['new', 'confirmed', 'preparing', 'ready'])
-            ->where('delivery_type', 'dine_in')
-            ->get(['table_number', 'status', 'total', 'order_no']);
+            ->where(function ($q) {
+                $q->where('delivery_type', 'dine_in')
+                    ->orWhereNotNull('table_number');
+            })
+            ->get(['id', 'table_number', 'status', 'total', 'order_no']);
 
         return view('admin.waiter.index', compact('tenant', 'categories', 'items', 'activeOrders'));
     }

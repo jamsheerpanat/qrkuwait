@@ -27,25 +27,27 @@ class CheckoutController extends Controller
 
         // Different validation for table orders vs regular orders
         if ($isTableOrder) {
-            $request->validate([
+            $rules = [
                 'customer_name' => 'nullable|string|max:255',
                 'customer_mobile' => ['nullable', 'string', 'regex:/^(\+?965)?[0-9]{8}$/'],
                 'table_number' => 'required|string|max:10',
                 'payment_method' => 'required|in:pay_later,knet,cash',
                 'cart_data' => 'required|json',
-            ]);
+            ];
         } else {
-            $request->validate([
+            $rules = [
                 'customer_name' => 'required|string|max:255',
                 'customer_mobile' => ['required', 'string', 'regex:/^(\+?965)?[0-9]{8}$/'],
                 'delivery_type' => 'required|in:pickup,delivery',
-                'area' => 'required_if:delivery_type,delivery',
-                'block' => 'required_if:delivery_type,delivery',
-                'house' => 'required_if:delivery_type,delivery',
+                'area' => 'required_if:delivery_type,delivery|nullable|string|max:255',
+                'block' => 'required_if:delivery_type,delivery|nullable|string|max:255',
+                'house' => 'required_if:delivery_type,delivery|nullable|string|max:255',
                 'payment_method' => 'required|in:cash,knet',
                 'cart_data' => 'required|json',
-            ]);
+            ];
         }
+
+        $request->validate($rules);
 
         $cart = json_decode($request->cart_data, true);
         if (empty($cart)) {
@@ -63,15 +65,16 @@ class CheckoutController extends Controller
                 'qty' => $item['qty'] ?? 1,
                 'price' => $item['price'],
                 'line_total' => $line_total,
-                'selected_variants' => $item['variants'] ?? null,
+                'notes' => $item['note'] ?? null,
+                'selected_variants' => $item['variant'] ?? null,
                 'selected_modifiers' => $item['modifiers'] ?? null,
             ];
         }
 
         $orderService = app(\App\Services\OrderService::class);
         $order = $orderService->createOrder([
-            'customer_name' => $request->customer_name ?? 'Table ' . $request->table_number,
-            'customer_mobile' => $request->customer_mobile,
+            'customer_name' => $request->filled('customer_name') ? $request->customer_name : 'Table ' . $request->table_number,
+            'customer_mobile' => $request->filled('customer_mobile') ? $request->customer_mobile : null,
             'delivery_type' => $isTableOrder ? 'dine_in' : $request->delivery_type,
             'table_number' => $request->table_number,
             'address' => $request->delivery_type === 'delivery' ? [

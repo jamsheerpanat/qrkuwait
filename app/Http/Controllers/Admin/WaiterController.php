@@ -13,39 +13,7 @@ class WaiterController extends Controller
 {
     public function index(Request $request)
     {
-        $tenant = $request->attributes->get('tenant');
-
-        if (!$tenant) {
-            return redirect()->route('dashboard')->with('error', 'Tenant context not found.');
-        }
-
-        $categories = Category::where('tenant_id', $tenant->id)
-            ->where('is_active', true)
-            ->orderBy('sort_order')
-            ->get();
-
-        $items = Item::where('tenant_id', $tenant->id)
-            ->where('is_active', true)
-            ->orderBy('sort_order')
-            ->get();
-
-        // Get active orders to show busy tables - more defensive query
-        $activeOrdersQuery = Order::where('tenant_id', $tenant->id)
-            ->whereIn('status', ['new', 'confirmed', 'preparing', 'ready']);
-
-        // Check if table_number column exists to avoid 500 if migration skipped
-        if (\Illuminate\Support\Facades\Schema::hasColumn('orders', 'table_number')) {
-            $activeOrdersQuery->where(function ($q) {
-                $q->where('delivery_type', 'dine_in')
-                    ->orWhereNotNull('table_number');
-            });
-            $activeOrders = $activeOrdersQuery->get(['id', 'table_number', 'status', 'total', 'order_no']);
-        } else {
-            // Fallback for missing column
-            $activeOrders = $activeOrdersQuery->get(['id', 'status', 'total', 'order_no']);
-        }
-
-        return view('admin.waiter.index', compact('tenant', 'categories', 'items', 'activeOrders'));
+        return "Waiter Mode Diagnostic: If you see this, the route and middleware are working. The issue is in the data loading logic.";
     }
 
     public function createOrder(Request $request)

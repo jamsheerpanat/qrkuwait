@@ -2,8 +2,8 @@
 
 @section('content')
     @php
-        $table = request()->query('table');
-        $isTableOrder = !empty($table);
+        $table = request()->query('table') ?? request()->query('t');
+                $isTableOrder = !empty($table);
     @endphp
 
     <div x-data="checkoutState()" x-init="init()" class="pb-40 max-w-2xl mx-auto">

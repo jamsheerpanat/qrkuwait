@@ -36,6 +36,12 @@
                         <x-nav-link :href="route('admin.packing.index')" :active="request()->routeIs('admin.packing.*')">
                             {{ __('Packing') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.waiter.index')" :active="request()->routeIs('admin.waiter.*')">
+                            {{ __('Waiter') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.staff.index')" :active="request()->routeIs('admin.staff.*')">
+                            {{ __('Staff') }}
+                        </x-nav-link>
                         <x-nav-link :href="route('admin.categories.index')"
                             :active="request()->routeIs('admin.categories.*')">
                             {{ __('Categories') }}
@@ -135,6 +141,12 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.packing.index')" :active="request()->routeIs('admin.packing.*')">
                     {{ __('Packing') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.waiter.index')" :active="request()->routeIs('admin.waiter.*')">
+                    {{ __('Waiter') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.staff.index')" :active="request()->routeIs('admin.staff.*')">
+                    {{ __('Staff') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.categories.index')"
                     :active="request()->routeIs('admin.categories.*')">

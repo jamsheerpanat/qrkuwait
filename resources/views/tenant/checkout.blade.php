@@ -34,66 +34,110 @@
 
             <div class="space-y-10">
                 @if($isTableOrder)
-                    {{-- SIMPLIFIED TABLE ORDER FORM --}}
-                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 space-y-6">
-                        <div class="flex items-center gap-4 p-4 bg-amber-50 rounded-2xl border border-amber-200">
-                            <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center text-2xl">🍽️</div>
+                    {{-- DINE-IN TABLE ORDER FORM - Simplified for dining experience --}}
+
+                    {{-- Table Info Card --}}
+                    <div
+                        class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-[2.5rem] p-8 shadow-sm border border-amber-100 space-y-4">
+                        <div class="flex items-center gap-5">
+                            <div
+                                class="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-2xl flex items-center justify-center text-3xl text-white shadow-lg shadow-amber-200">
+                                🍽️
+                            </div>
                             <div>
-                                <p class="font-bold text-amber-800">Table {{ $table }}</p>
-                                <p class="text-sm text-amber-600">Your order will be served at your table</p>
+                                <p class="text-2xl font-black italic text-amber-900">Table {{ $table }}</p>
+                                <p class="text-sm font-semibold text-amber-700">Dine-In Order</p>
                             </div>
                         </div>
-
-                        <div>
-                            <x-input-label for="customer_mobile" :value="__('Mobile Number (for updates)')"
-                                class="text-xs uppercase tracking-widest font-bold text-slate-400 mb-2" />
-                            <div class="relative">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">+965</span>
-                                <input type="tel" name="customer_mobile"
-                                    class="w-full bg-slate-50 border-none rounded-2xl p-4 pl-16 focus:ring-2 focus:ring-brand-600 font-bold shadow-inner"
-                                    placeholder="Phone Number" required maxlength="8">
-                            </div>
-                        </div>
-
-                        <div>
-                            <x-input-label for="notes" :value="__('Special Instructions (Optional)')"
-                                class="text-xs uppercase tracking-widest font-bold text-slate-400 mb-2" />
-                            <textarea name="notes" rows="2"
-                                class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-brand-600 font-bold shadow-inner"
-                                placeholder="Any allergies or preferences?"></textarea>
+                        <div class="flex items-center gap-2 text-sm text-amber-700 bg-amber-100/60 rounded-xl px-4 py-3">
+                            <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="font-medium">Order will be served at your table. Pay when you're ready to leave.</span>
                         </div>
                     </div>
 
-                    {{-- Payment for Table Order --}}
+                    {{-- Order Summary Card --}}
                     <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 space-y-6">
                         <h3 class="text-xl font-bold flex items-center gap-3">
                             <span
-                                class="w-10 h-10 bg-brand-100 text-brand-600 rounded-xl flex items-center justify-center text-sm">💳</span>
-                            Payment
+                                class="w-10 h-10 bg-brand-100 text-brand-600 rounded-xl flex items-center justify-center text-sm">01</span>
+                            Your Order
                         </h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <label class="relative cursor-pointer group">
-                                <input type="radio" name="payment_method" value="pay_later" x-model="paymentMethod"
-                                    class="sr-only peer" checked>
-                                <div
-                                    class="p-6 rounded-3xl border-2 border-slate-100 peer-checked:border-brand-600 peer-checked:bg-brand-50 transition-all text-center">
-                                    <span class="text-3xl mb-2 block">🧾</span>
-                                    <span class="font-bold block">Pay Later</span>
-                                    <span class="text-xs text-slate-400">At checkout</span>
+
+                        <div class="space-y-3 max-h-64 overflow-y-auto" x-show="cart.length > 0">
+                            <template x-for="(item, index) in cart" :key="index">
+                                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-10 h-10 bg-slate-200 rounded-xl flex items-center justify-center text-sm font-black text-slate-600"
+                                            x-text="item.qty || 1"></div>
+                                        <div>
+                                            <p class="font-bold text-slate-800" x-text="item.name"></p>
+                                            <p class="text-sm text-slate-500" x-show="item.variants">
+                                                <span x-text="item.variants?.name || ''"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <p class="font-bold text-slate-900"
+                                        x-text="(parseFloat(item.price) * (item.qty || 1)).toFixed(3) + ' KWD'"></p>
                                 </div>
-                            </label>
-                            <label class="relative cursor-pointer group">
-                                <input type="radio" name="payment_method" value="knet" x-model="paymentMethod"
-                                    class="sr-only peer">
-                                <div
-                                    class="p-6 rounded-3xl border-2 border-slate-100 peer-checked:border-brand-600 peer-checked:bg-brand-50 transition-all text-center">
-                                    <span class="text-3xl mb-2 block">💳</span>
-                                    <span class="font-bold block">KNET</span>
-                                    <span class="text-xs text-slate-400">Pay now</span>
-                                </div>
-                            </label>
+                            </template>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-100">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500 font-bold">Items in order</span>
+                                <span class="font-black text-lg text-slate-900"
+                                    x-text="cart.reduce((sum, item) => sum + (item.qty || 1), 0) + ' items'"></span>
+                            </div>
                         </div>
                     </div>
+
+                    {{-- Contact Info (Optional) --}}
+                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 space-y-6">
+                        <h3 class="text-xl font-bold flex items-center gap-3">
+                            <span
+                                class="w-10 h-10 bg-brand-100 text-brand-600 rounded-xl flex items-center justify-center text-sm">02</span>
+                            Contact (Optional)
+                        </h3>
+                        <p class="text-sm text-slate-500 -mt-2">Get order updates via WhatsApp</p>
+
+                        <div class="space-y-4">
+                            <div>
+                                <x-input-label for="customer_name" :value="__('Your Name')"
+                                    class="text-xs uppercase tracking-widest font-bold text-slate-400 mb-2" />
+                                <input type="text" name="customer_name"
+                                    class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-brand-600 font-bold shadow-inner"
+                                    placeholder="How should we call you?">
+                            </div>
+                            <div>
+                                <x-input-label for="customer_mobile" :value="__('Mobile Number')"
+                                    class="text-xs uppercase tracking-widest font-bold text-slate-400 mb-2" />
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">+965</span>
+                                    <input type="tel" name="customer_mobile"
+                                        class="w-full bg-slate-50 border-none rounded-2xl p-4 pl-16 focus:ring-2 focus:ring-brand-600 font-bold shadow-inner"
+                                        placeholder="Optional - for updates" maxlength="8">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Special Instructions --}}
+                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 space-y-6">
+                        <h3 class="text-xl font-bold flex items-center gap-3">
+                            <span
+                                class="w-10 h-10 bg-brand-100 text-brand-600 rounded-xl flex items-center justify-center text-sm">03</span>
+                            Special Requests
+                        </h3>
+                        <textarea name="notes" rows="3"
+                            class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-2 focus:ring-brand-600 font-bold shadow-inner"
+                            placeholder="Allergies, preferences, or any special requests..."></textarea>
+                    </div>
+
+                    {{-- Hidden Payment Method for Dine-In - Always Pay Later --}}
+                    <input type="hidden" name="payment_method" value="pay_later">
                 @else
                     {{-- FULL DELIVERY/PICKUP FORM --}}
                     <!-- Contact Info -->
@@ -311,14 +355,18 @@
                             <span class="text-sm sm:text-base not-italic text-slate-400 font-bold">KWD</span>
                         </p>
                     </div>
-                    <button type="submit"
-                        class="bg-slate-900 text-white px-6 sm:px-10 py-4 sm:py-5 rounded-2xl sm:rounded-[2rem] font-black italic text-lg sm:text-xl shadow-2xl shadow-slate-900/40 transform active:scale-95 transition whitespace-nowrap">
-                        @if($isTableOrder)
-                            Send Order
-                        @else
+                    @if($isTableOrder)
+                        <button type="submit"
+                            class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 sm:px-10 py-4 sm:py-5 rounded-2xl sm:rounded-[2rem] font-black italic text-lg sm:text-xl shadow-2xl shadow-amber-500/40 transform active:scale-95 transition whitespace-nowrap flex items-center gap-2">
+                            <span>Send to Kitchen</span>
+                            <span class="text-2xl">🍳</span>
+                        </button>
+                    @else
+                        <button type="submit"
+                            class="bg-slate-900 text-white px-6 sm:px-10 py-4 sm:py-5 rounded-2xl sm:rounded-[2rem] font-black italic text-lg sm:text-xl shadow-2xl shadow-slate-900/40 transform active:scale-95 transition whitespace-nowrap">
                             Place Order
-                        @endif
-                    </button>
+                        </button>
+                    @endif
                 </div>
             </div>
         </form>

@@ -28,7 +28,8 @@ class CheckoutController extends Controller
         // Different validation for table orders vs regular orders
         if ($isTableOrder) {
             $request->validate([
-                'customer_mobile' => ['required', 'string', 'regex:/^(\+?965)?[0-9]{8}$/'],
+                'customer_name' => 'nullable|string|max:255',
+                'customer_mobile' => ['nullable', 'string', 'regex:/^(\+?965)?[0-9]{8}$/'],
                 'table_number' => 'required|string|max:10',
                 'payment_method' => 'required|in:pay_later,knet,cash',
                 'cart_data' => 'required|json',

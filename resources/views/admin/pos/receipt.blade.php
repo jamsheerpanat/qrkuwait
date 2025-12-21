@@ -279,8 +279,18 @@
     </div>
     
     <script>
-        // Auto-print on load (optional)
-        // window.onload = () => window.print();
+            // Auto-print on load
+            window.onload = () => {
+                window.print();
+                // Automatically close the window after print dialog is closed
+                window.onafterprint = () => window.close();
+                // Fallback for some browsers
+                setTimeout(() => {
+                    if (!window.matchMedia('print').matches) {
+                        // window.close();
+                    }
+                }, 500);
+            };
     </script>
 </body>
 </html>

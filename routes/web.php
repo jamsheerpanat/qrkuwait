@@ -87,7 +87,7 @@ Route::middleware(['auth', 'tenant'])->prefix('admin')->name('admin.')->group(fu
     Route::post('/waiter/checkout/{orderNo}', [\App\Http\Controllers\Admin\WaiterController::class, 'checkout'])->name('waiter.checkout');
 
     // Staff Management
-    Route::resource('staff', \App\Http\Controllers\Admin\StaffController::class)->names('staff');
+    Route::resource('staff', \App\Http\Controllers\Admin\StaffController::class);
 
 });
 

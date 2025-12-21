@@ -13,6 +13,11 @@ class StaffController extends Controller
     public function index(Request $request)
     {
         $tenant = $request->attributes->get('tenant');
+
+        if (!$tenant) {
+            return redirect()->route('dashboard')->with('error', 'Tenant context not found.');
+        }
+
         $staff = User::where('tenant_id', $tenant->id)
             ->where('role', '!=', 'super_admin')
             ->get();
@@ -31,7 +36,7 @@ class StaffController extends Controller
 
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'in:waiter,kitchen,cashier,tenant_admin'],
         ]);

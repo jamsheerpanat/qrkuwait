@@ -125,6 +125,12 @@
     <div class="no-print center" style="margin-top: 20px;">
         <button onclick="window.close()" style="padding: 10px 20px;">Close Window</button>
     </div>
+    <script>
+        window.onload = () => {
+            window.print();
+            window.onafterprint = () => window.close();
+        };
+    </script>
 </body>
 
 </html>

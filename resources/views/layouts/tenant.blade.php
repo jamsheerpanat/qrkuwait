@@ -106,38 +106,41 @@
     </footer>
 
     <!-- Minimal Bottom Nav -->
-    <nav
-        class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-100 safe-area-bottom sm:hidden z-50">
-        <div class="flex items-center justify-around h-16">
-            <a href="#" class="p-4 text-slate-900">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
-                    </path>
-                </svg>
-            </a>
-            <button @click="$dispatch('open-search')" class="p-4 text-slate-400 hover:text-slate-900 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-            </button>
-            <button @click="$dispatch('open-cart')" class="p-4 text-slate-400 hover:text-slate-900 transition-colors relative">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M16 11V7a4 4 0 00-8 0v4M5 11h14l1 12H4l1-12z"></path>
-                </svg>
-                <template x-if="cartCount > 0">
-                    <span class="absolute top-4 right-4 w-1.5 h-1.5 bg-slate-900 rounded-full"></span>
-                </template>
-            </button>
-            <a href="#" class="p-4 text-slate-400 hover:text-slate-900 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                </svg>
-            </a>
-        </div>
-    </nav>
+    @unless(request()->routeIs('tenant.checkout') || request()->routeIs('tenant.checkout.success'))
+        <nav
+            class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-100 safe-area-bottom sm:hidden z-50">
+            <div class="flex items-center justify-around h-16">
+                <a href="{{ route('tenant.public', $currentTenant->slug) }}"
+                    class="p-4 {{ request()->routeIs('tenant.public') ? 'text-slate-900' : 'text-slate-400' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                        </path>
+                    </svg>
+                </a>
+                <button @click="$dispatch('open-search')" class="p-4 text-slate-400 hover:text-slate-900 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+                <button @click="$dispatch('open-cart')" class="p-4 text-slate-400 hover:text-slate-900 transition-colors relative">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 11h14l1 12H4l1-12z"></path>
+                    </svg>
+                    <template x-if="cartCount > 0">
+                        <span class="absolute top-4 right-4 w-1.5 h-1.5 bg-slate-900 rounded-full"></span>
+                    </template>
+                </button>
+                <a href="#" class="p-4 text-slate-400 hover:text-slate-900 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    </svg>
+                </a>
+            </div>
+        </nav>
+    @endunless
 </body>
 </html>

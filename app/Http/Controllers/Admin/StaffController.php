@@ -41,15 +41,20 @@ class StaffController extends Controller
             'role' => ['required', 'in:waiter,kitchen,cashier,tenant_admin'],
         ]);
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'tenant_id' => $tenant->id,
-            'role' => $request->role,
-        ]);
+        try {
+            User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'tenant_id' => $tenant->id,
+                'role' => $request->role,
+            ]);
 
-        return redirect()->route('admin.staff.index')->with('success', 'Staff member created successfully.');
+            return redirect()->route('admin.staff.index')->with('success', 'Staff member created successfully.');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Staff Creation Error: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Could not create staff member. This may be due to a missing role in the database. Please run migrations.');
+        }
     }
 
     public function edit(Request $request, $id)
@@ -71,20 +76,25 @@ class StaffController extends Controller
             'role' => ['required', 'in:waiter,kitchen,cashier,tenant_admin'],
         ]);
 
-        $member->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => $request->role,
-        ]);
-
-        if ($request->filled('password')) {
-            $request->validate([
-                'password' => ['confirmed', Rules\Password::defaults()],
+        try {
+            $member->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'role' => $request->role,
             ]);
-            $member->update(['password' => Hash::make($request->password)]);
-        }
 
-        return redirect()->route('admin.staff.index')->with('success', 'Staff member updated successfully.');
+            if ($request->filled('password')) {
+                $request->validate([
+                    'password' => ['confirmed', Rules\Password::defaults()],
+                ]);
+                $member->update(['password' => Hash::make($request->password)]);
+            }
+
+            return redirect()->route('admin.staff.index')->with('success', 'Staff member updated successfully.');
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Staff Update Error: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Could not update staff member. Please ensure migrations have been run.');
+        }
     }
 
     public function destroy(Request $request, $id)

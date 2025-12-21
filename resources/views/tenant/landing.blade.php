@@ -306,7 +306,7 @@
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ __('Total Order') }}</span>
                         <span class="text-2xl font-bold text-slate-900" x-text="formatPrice(calculateCartTotal())"></span>
                     </div>
-                    <a href="{{ route('tenant.checkout', $tenant->slug) }}" 
+                    <a href="{{ route('tenant.checkout', [$tenant->slug, 'table' => request()->query('table')]) }}"
                         class="flex-1 bg-slate-900 text-white h-14 flex items-center justify-center rounded-xl text-sm font-bold tracking-tight hover:shadow-lg transition-all"
                         :class="cart.length === 0 ? 'opacity-50 pointer-events-none' : ''">
                         {{ __('Checkout Now') }}

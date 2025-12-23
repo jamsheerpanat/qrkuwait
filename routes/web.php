@@ -94,6 +94,10 @@ Route::middleware(['auth', 'tenant'])->prefix('admin')->name('admin.')->group(fu
 // API for POS (Token Based)
 Route::get('/api/pos/orders', [\App\Http\Controllers\Api\POSController::class, 'index']);
 
+// API for Mobile App (Public)
+Route::get('/api/tenants', [\App\Http\Controllers\Api\TenantController::class, 'index']);
+Route::get('/api/tenants/grouped', [\App\Http\Controllers\Api\TenantController::class, 'grouped']);
+
 require __DIR__ . '/auth.php';
 
 // Public Tenant Routes
